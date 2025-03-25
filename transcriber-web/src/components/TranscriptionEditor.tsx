@@ -1,5 +1,4 @@
-'use client'
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface TranscriptionEditorProps {
   transcription: string;
@@ -8,13 +7,7 @@ interface TranscriptionEditorProps {
 const TranscriptionEditor: React.FC<TranscriptionEditorProps> = ({
   transcription,
 }) => {
-  const [editedText, setEditedText] = useState(
-    localStorage.getItem("transcription") || transcription
-  );
-
-  useEffect(() => {
-    localStorage.setItem("transcription", editedText);
-  }, [editedText]);
+  const [editedText, setEditedText] = useState(transcription);
 
   return (
     <div className="p-4 max-w-2xl mx-auto">

@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 import fs from "fs";
 import axios from "axios";
 import { fileTypeFromBuffer } from "file-type";
@@ -9,36 +9,40 @@ if (!apiKey) {
   throw new Error("API Key is not defined. Please check your .env file.");
 }
 
-const encodingMap: { [key: string]: string } = {
-  'wav': 'LINEAR16',
-  'flac': 'FLAC',
-  'ulaw': 'MULAW',
-  'amr': 'AMR',
-  'awb': 'AMR_WB',
-  'ogg': 'OGG_OPUS',
-  'opus': 'OGG_OPUS',
-  'speex': 'SPEEX_WITH_HEADER_BYTE',
-  'mp3': 'MP3',
-  'webm': 'WEBM_OPUS'
+const encodingMap: {
+  [key: string]: { encoding: string; sampleRateHertz: number };
+} = {
+  wav: { encoding: "LINEAR16", sampleRateHertz: 16000 },
+  flac: { encoding: "FLAC", sampleRateHertz: 16000 },
+  ulaw: { encoding: "MULAW", sampleRateHertz: 8000 },
+  amr: { encoding: "AMR", sampleRateHertz: 8000 },
+  awb: { encoding: "AMR_WB", sampleRateHertz: 16000 },
+  ogg: { encoding: "OGG_OPUS", sampleRateHertz: 16000 },
+  opus: { encoding: "OGG_OPUS", sampleRateHertz: 16000 },
+  speex: { encoding: "SPEEX_WITH_HEADER_BYTE", sampleRateHertz: 16000 },
+  mp3: { encoding: "MP3", sampleRateHertz: 16000 },
+  webm: { encoding: "WEBM_OPUS", sampleRateHertz: 16000 },
 };
 
 export async function transcribeAudio(filePath: string): Promise<string> {
   try {
     const file = fs.readFileSync(filePath);
-    const audioContent = file.toString('base64');
+    const audioContent = file.toString("base64");
 
     const fileType = await fileTypeFromBuffer(file);
     if (!fileType || !encodingMap[fileType.ext]) {
-      throw new Error(`Unsupported audio format: ${fileType ? fileType.ext : 'unknown'}`);
+      throw new Error(
+        `Unsupported audio format: ${fileType ? fileType.ext : "unknown"}`
+      );
     }
 
-    const encoding = encodingMap[fileType.ext];
+    const { encoding, sampleRateHertz } = encodingMap[fileType.ext];
 
     const request = {
       config: {
-        encoding: 'OGG_OPUS',
-        sampleRateHertz: 16000,
-        languageCode: 'pt-BR',
+        encoding,
+        sampleRateHertz,
+        languageCode: "pt-BR",
       },
       audio: {
         content: audioContent,
@@ -50,7 +54,7 @@ export async function transcribeAudio(filePath: string): Promise<string> {
       request,
       {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       }
     );
@@ -58,13 +62,16 @@ export async function transcribeAudio(filePath: string): Promise<string> {
     console.log("Transcription response:", response.data);
 
     if (!response.data || !response.data.results) {
-      console.error("Invalid response from Google Speech-to-Text API:", response.data);
+      console.error(
+        "Invalid response from Google Speech-to-Text API:",
+        response.data
+      );
       throw new Error("Invalid response from Google Speech-to-Text API");
     }
 
     const transcription = response.data.results
       .map((result: any) => result.alternatives[0].transcript)
-      .join('\n');
+      .join("\n");
 
     fs.unlinkSync(filePath); // Remove o arquivo temporário
     return transcription;
