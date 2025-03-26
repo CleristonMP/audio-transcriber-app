@@ -38,12 +38,8 @@ const AudioRecorder = () => {
 
       if (uri) {
         try {
-          const audioFile = await getFileFromUri(uri, "recording.wav", "audio/wav");
+          const audioFile = await getFileFromUri(uri, "recording.wav");
           setMessage(`Áudio salvo em: ${uri}`);
-
-          console.log(audioFile);          
-
-
           await uploadAudioAndGetTranscription(audioFile, navigation);
         } catch (error) {
           setMessage("Erro ao processar o arquivo de áudio.");

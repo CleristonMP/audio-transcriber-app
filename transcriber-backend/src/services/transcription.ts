@@ -2,6 +2,8 @@ require("dotenv").config();
 import fs from "fs";
 import axios from "axios";
 import { fileTypeFromBuffer } from "file-type";
+import { exec } from "child_process";
+import path from "path";
 
 const apiKey = process.env.GOOGLE_APPLICATION_CREDENTIALS;
 
@@ -26,10 +28,41 @@ const encodingMap: {
 
 export async function transcribeAudio(filePath: string): Promise<string> {
   try {
-    const file = fs.readFileSync(filePath);
+    const convertedFilePath = path.join(
+      path.dirname(filePath),
+      `${path.basename(filePath, path.extname(filePath))}_converted.wav`
+    );
+
+    // Converte o áudio para WAV com taxa de amostragem de 16 kHz
+    await new Promise((resolve, reject) => {
+      exec(
+        `ffmpeg -i ${filePath} -ar 16000 -ac 1 ${convertedFilePath}`,
+        (error, stdout, stderr) => {
+          if (error) {
+            console.error("Error converting audio:", stderr);
+            reject(new Error("Failed to convert audio to 16 kHz."));
+          } else {
+            resolve(stdout);
+          }
+        }
+      );
+    });
+
+    // Remove o arquivo original após a conversão
+    fs.unlinkSync(filePath);
+
+    const file = fs.readFileSync(convertedFilePath);
     const audioContent = file.toString("base64");
 
     const fileType = await fileTypeFromBuffer(file);
+
+    console.log("=== Debugging Converted Audio File ===");
+    console.log("File Path:", convertedFilePath);
+    console.log("File Type Detected:", fileType ? fileType.ext : "unknown");
+    console.log("MIME Type Detected:", fileType ? fileType.mime : "unknown");
+    console.log("File Size (bytes):", file.length);
+    console.log("============================");
+
     if (!fileType || !encodingMap[fileType.ext]) {
       throw new Error(
         `Unsupported audio format: ${fileType ? fileType.ext : "unknown"}`
@@ -73,20 +106,17 @@ export async function transcribeAudio(filePath: string): Promise<string> {
       .map((result: any) => result.alternatives[0].transcript)
       .join("\n");
 
-    fs.unlinkSync(filePath); // Remove o arquivo temporário
+    fs.unlinkSync(convertedFilePath); // Remove o arquivo convertido
     return transcription;
   } catch (error: any) {
     if (error.response) {
-      // A resposta foi recebida, mas o servidor respondeu com um status de erro
       console.error("Error response from API:", error.response.data);
     } else if (error.request) {
-      // A solicitação foi feita, mas nenhuma resposta foi recebida
       console.error("No response received:", error.request);
     } else {
-      // Algo aconteceu ao configurar a solicitação que acionou um erro
       console.error("Error setting up request:", error.message);
     }
-    console.error("Error transcribing audio:", error);
+    console.error("Error transcribing audio:", error.message);
     throw new Error("Transcription failed.");
   }
 }
