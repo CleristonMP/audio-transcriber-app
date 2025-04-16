@@ -1,15 +1,54 @@
 import { Audio } from "expo-av";
 import React, { useState } from "react";
-import { Button, Text, View } from "react-native";
+import { Animated, Button, Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../App";
 import { uploadAudioAndGetTranscription } from "../services/audioService";
 import { getFileFromUri } from "../utils/fileUtils";
+import LoaderModal from "./LoaderModal";
 
 const AudioRecorder = () => {
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [message, setMessage] = useState<string>("");
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const [isRecording, setIsRecording] = useState(false);
+  const [pulseAnim] = useState(new Animated.Value(1));
+  const [loading, setLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("");
+
+  const toggleRecording = () => {
+    setIsRecording(!isRecording);
+    if (!isRecording) {
+      startPulsing();
+      startRecording();
+    } else {
+      stopRecording();
+      stopPulsing();
+    }
+  };
+
+  const startPulsing = () => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.2,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  };
+
+  const stopPulsing = () => {
+    pulseAnim.setValue(1);
+    Animated.loop(Animated.timing(pulseAnim, { toValue: 1, duration: 0, useNativeDriver: true })).stop();
+  };
 
   const startRecording = async () => {
     try {
@@ -39,8 +78,11 @@ const AudioRecorder = () => {
       if (uri) {
         try {
           const audioFile = await getFileFromUri(uri, "recording.wav");
-          setMessage(`Áudio salvo em: ${uri}`);
+          // setMessage(`Áudio salvo em: ${uri}`);
+          setLoading(true);
+          setLoadingMessage("Processando áudio...");
           await uploadAudioAndGetTranscription(audioFile, navigation);
+          setLoadingMessage("Recebendo transcrição...");
         } catch (error) {
           setMessage("Erro ao processar o arquivo de áudio.");
           console.error(error);
@@ -55,12 +97,42 @@ const AudioRecorder = () => {
   };
 
   return (
-    <View>
-      <Button title="Iniciar Gravação" onPress={startRecording} />
-      <Button title="Parar Gravação" onPress={stopRecording} disabled={!recording} />
+    <View style={styles.container}>
+      <LoaderModal visible={loading} message={loadingMessage} />
+      <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+        <TouchableOpacity
+          style={[styles.button, isRecording && styles.recordingButton]}
+          onPress={toggleRecording}
+        >
+          <FontAwesome
+            name={isRecording ? "stop" : "microphone"}
+            size={24}
+            color="#fff"
+          />
+        </TouchableOpacity>
+      </Animated.View>
       <Text>{message}</Text>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 20,
+  },
+  button: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "#007AFF",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  recordingButton: {
+    backgroundColor: "#FF3B30",
+  },
+});
 
 export default AudioRecorder;

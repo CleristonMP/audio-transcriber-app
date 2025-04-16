@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { TextInput, ScrollView, StyleSheet, Button, Alert } from "react-native";
+import { TextInput, ScrollView, StyleSheet, Button, Alert, View, TouchableOpacity, Text } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { FontAwesome } from "@expo/vector-icons";
 import { exportText } from "../utils/exportText";
 
 type RootStackParamList = {
@@ -63,33 +64,77 @@ const TranscriptionScreen: React.FC<Props> = ({ route }: Props) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
+      <Text style={styles.title}>Editar Transcrição</Text>
       <TextInput
         style={styles.textInput}
         multiline
         value={editedText}
         onChangeText={setEditedText}
       />
-      <Button title="Salvar" onPress={() => saveEditedText(editedText)} />
-      <Button title="Exportar transcrição" onPress={handleExport} />
-    </ScrollView>
+      <View style={styles.iconRow}>
+        <TouchableOpacity style={styles.iconButton} onPress={() => saveEditedText(editedText)}>
+          <FontAwesome name="save" size={24} color="#007AFF" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.iconButton} onPress={handleExport}>
+          <FontAwesome name="share" size={24} color="#4CD964" />
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
-    backgroundColor: "#fff",
+    backgroundColor: "#f9f9f9",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 20,
+    textAlign: "center",
   },
   textInput: {
     fontSize: 16,
     color: "#333",
     borderColor: "#ccc",
     borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
+    borderRadius: 10,
+    padding: 15,
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
     marginBottom: 20,
+    width: "80%",
+    height: "50%",
+    alignSelf: "center",
+  },
+  iconRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "60%",
+    marginTop: 20,
+  },
+  iconButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#fff",
+    borderRadius: 30,
+    width: 60,
+    height: 60,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });
 
