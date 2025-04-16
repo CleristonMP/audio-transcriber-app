@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { TextInput, ScrollView, StyleSheet, Button, Alert } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { exportText } from "../utils/exportText";
 
 type RootStackParamList = {
   Home: undefined;
@@ -19,7 +20,7 @@ const TranscriptionScreen: React.FC<Props> = ({ route }: Props) => {
     if (transcription) {
       deleteEditedText();
       saveEditedText(transcription);
-    };
+    }
 
     // Carregar a transcrição salva (se necessário)
     loadEditedText();
@@ -49,7 +50,17 @@ const TranscriptionScreen: React.FC<Props> = ({ route }: Props) => {
     } catch (error) {
       console.error("Erro ao deletar a transcrição:", error);
     }
-  }
+  };
+
+  const handleExport = async () => {
+    try {
+      await exportText(editedText);
+      Alert.alert("Sucesso", "Transcrição exportada com sucesso!");
+    } catch (error) {
+      Alert.alert("Erro", "Não foi possível exportar a transcrição.");
+      console.error("Erro ao exportar a transcrição:", error);
+    }
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -60,6 +71,7 @@ const TranscriptionScreen: React.FC<Props> = ({ route }: Props) => {
         onChangeText={setEditedText}
       />
       <Button title="Salvar" onPress={() => saveEditedText(editedText)} />
+      <Button title="Exportar transcrição" onPress={handleExport} />
     </ScrollView>
   );
 };
