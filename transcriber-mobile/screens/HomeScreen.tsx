@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, Alert, View, TouchableOpacity, Text } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -14,49 +14,36 @@ const HomeScreen = () => {
   const [hasSavedTranscription, setHasSavedTranscription] = useState(false);
 
   useEffect(() => {
-    const checkSavedTranscription = async () => {
+    const checkSavedTranscriptions = async () => {
       try {
-        const savedTranscription = await AsyncStorage.getItem("transcription");
-        setHasSavedTranscription(!!savedTranscription);
+        const keys = await AsyncStorage.getAllKeys();
+        setHasSavedTranscription(keys.length > 0);
       } catch (error) {
-        console.error("Erro ao verificar transcrição salva:", error);
+        console.error("Erro ao verificar transcrições salvas:", error);
       }
     };
 
-    checkSavedTranscription();
+    checkSavedTranscriptions();
   }, []);
-
-  const handleNavigateToTranscription = async () => {
-    try {
-      const savedTranscription = await AsyncStorage.getItem("transcription");
-      if (savedTranscription) {
-        navigation.navigate("Transcription", {
-          transcription: savedTranscription,
-        });
-      } else {
-        Alert.alert("Aviso", "Nenhuma transcrição salva encontrada.");
-      }
-    } catch (error) {
-      console.error("Erro ao navegar para a tela de transcrição:", error);
-    }
-  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Transcreva seu Áudio</Text>
       <View style={styles.buttonsRow}>
-        <AudioRecorder />
         <AudioUploader />
+        <AudioRecorder />
       </View>
-      {hasSavedTranscription && (
+      {/* {hasSavedTranscription && ( */}
         <TouchableOpacity
-          style={styles.continueButton}
-          onPress={handleNavigateToTranscription}
+          style={styles.savedTranscriptionsButton}
+          onPress={() => navigation.navigate("SavedTranscriptions")}
         >
           <FontAwesome name="file-text" size={20} color="#fff" />
-          <Text style={styles.continueButtonText}>Continuar Edição</Text>
+          <Text style={styles.savedTranscriptionsButtonText}>
+            Ver Transcrições Salvas
+          </Text>
         </TouchableOpacity>
-      )}
+      {/* )} */}
     </View>
   );
 };
@@ -81,7 +68,7 @@ const styles = StyleSheet.create({
     alignItems: "baseline",
     width: "50%",
   },
-  continueButton: {
+  savedTranscriptionsButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -96,7 +83,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  continueButtonText: {
+  savedTranscriptionsButtonText: {
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",

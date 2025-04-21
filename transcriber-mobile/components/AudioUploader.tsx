@@ -1,7 +1,6 @@
 import * as DocumentPicker from "expo-document-picker";
 import React, { useState } from "react";
 import {
-  Button,
   Text,
   View,
   StyleSheet,
