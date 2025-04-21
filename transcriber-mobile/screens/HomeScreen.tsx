@@ -33,7 +33,7 @@ const HomeScreen = () => {
         <AudioUploader />
         <AudioRecorder />
       </View>
-      {/* {hasSavedTranscription && ( */}
+      {hasSavedTranscription && (
         <TouchableOpacity
           style={styles.savedTranscriptionsButton}
           onPress={() => navigation.navigate("SavedTranscriptions")}
@@ -43,7 +43,7 @@ const HomeScreen = () => {
             Ver Transcrições Salvas
           </Text>
         </TouchableOpacity>
-      {/* )} */}
+      )}
     </View>
   );
 };

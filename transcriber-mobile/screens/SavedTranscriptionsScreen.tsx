@@ -11,10 +11,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { FontAwesome } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type RootStackParamList = {
   Home: undefined;
-  Transcription: { transcription: string, id: string };
+  Transcription: { transcription: string; id: string };
   SavedTranscriptions: undefined;
 };
 
@@ -25,7 +26,7 @@ type NavigationProp = NativeStackNavigationProp<
 
 const SavedTranscriptionsScreen: React.FC = () => {
   const [transcriptions, setTranscriptions] = useState<
-  { id: string; text: string; createdAt: string }[]
+    { id: string; text: string; createdAt: string }[]
   >([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
@@ -38,15 +39,15 @@ const SavedTranscriptionsScreen: React.FC = () => {
         const keys = await AsyncStorage.getAllKeys();
         const items = await AsyncStorage.multiGet(keys);
         const formattedTranscriptions = items
-        .filter(([key]) => key !== "last_transcription_id")
-        .map(([key, value]) => {
-          const transcription = JSON.parse(value || "{}");
-          return {
-            id: transcription.id,
-            text: transcription.text,
-            createdAt: transcription.createdAt,
-          };
-        });
+          .filter(([key]) => key !== "last_transcription_id")
+          .map(([key, value]) => {
+            const transcription = JSON.parse(value || "{}");
+            return {
+              id: transcription.id,
+              text: transcription.text,
+              createdAt: transcription.createdAt,
+            };
+          });
         setTranscriptions(formattedTranscriptions);
       } catch (error) {
         console.error("Erro ao carregar as transcrições:", error);
@@ -65,7 +66,7 @@ const SavedTranscriptionsScreen: React.FC = () => {
   };
 
   const handleSelectTranscription = (transcription: string, id: string) => {
-      navigation.navigate("Transcription", { transcription, id });
+    navigation.navigate("Transcription", { transcription, id });
   };
 
   const handleDeleteTranscription = async () => {
@@ -91,11 +92,20 @@ const SavedTranscriptionsScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      {/* Botão para voltar à tela Home */}
+      <TouchableOpacity
+        style={styles.homeButton}
+        onPress={() => navigation.navigate("Home")}
+      >
+        <FontAwesome name="home" size={24} color="#fff" />
+      </TouchableOpacity>
+
       <Text style={styles.title}>Transcrições Salvas</Text>
       <FlatList
         data={transcriptions}
         keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingBottom: 20 }}
         renderItem={({ item }) => (
           <View style={styles.transcriptionCard}>
             <Text style={styles.transcriptionDate}>
@@ -121,6 +131,7 @@ const SavedTranscriptionsScreen: React.FC = () => {
           </View>
         )}
       />
+      {/* Modais existentes */}
       <Modal
         visible={modalVisible}
         transparent
@@ -157,7 +168,9 @@ const SavedTranscriptionsScreen: React.FC = () => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.successModalContent}>
-            <Text style={styles.successModalText}>Transcrição deletada com sucesso!</Text>
+            <Text style={styles.successModalText}>
+              Transcrição deletada com sucesso!
+            </Text>
             <TouchableOpacity
               style={styles.successModalButton}
               onPress={() => setSuccessModalVisible(false)}
@@ -167,7 +180,7 @@ const SavedTranscriptionsScreen: React.FC = () => {
           </View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -176,6 +189,19 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#f9f9f9",
+    marginTop: 20,
+  },
+  homeButton: {
+    position: "absolute",
+    top: 30,
+    right: 20,
+    backgroundColor: "#007AFF",
+    borderRadius: 30,
+    width: 50,
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1,
   },
   title: {
     fontSize: 24,
