@@ -12,6 +12,7 @@ import { RootStackParamList } from "../App";
 import { uploadAudioAndGetTranscription } from "../services/audioService";
 import { FontAwesome } from "@expo/vector-icons";
 import LoaderModal from "./LoaderModal";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 const AudioUploader = () => {
   const [file, setFile] =
@@ -19,7 +20,8 @@ const AudioUploader = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
-  const navigation = useNavigation<RootStackParamList>();
+
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const pickDocument = async () => {
     try {

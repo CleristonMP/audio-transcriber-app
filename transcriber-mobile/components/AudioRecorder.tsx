@@ -1,21 +1,23 @@
 import { Audio } from "expo-av";
 import React, { useState } from "react";
-import { Animated, Button, Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { Animated, Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../App";
 import { uploadAudioAndGetTranscription } from "../services/audioService";
 import { getFileFromUri } from "../utils/fileUtils";
 import LoaderModal from "./LoaderModal";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 const AudioRecorder = () => {
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [message, setMessage] = useState<string>("");
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [isRecording, setIsRecording] = useState(false);
   const [pulseAnim] = useState(new Animated.Value(1));
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
+
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const toggleRecording = () => {
     setIsRecording(!isRecording);
@@ -78,7 +80,6 @@ const AudioRecorder = () => {
       if (uri) {
         try {
           const audioFile = await getFileFromUri(uri, "recording.wav");
-          // setMessage(`Áudio salvo em: ${uri}`);
           setLoading(true);
           setLoadingMessage("Processando áudio...");
           await uploadAudioAndGetTranscription(audioFile, navigation);

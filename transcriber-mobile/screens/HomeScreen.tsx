@@ -7,10 +7,15 @@ import { FontAwesome } from "@expo/vector-icons";
 import { RootStackParamList } from "../App";
 import AudioRecorder from "../components/AudioRecorder";
 import AudioUploader from "../components/AudioUploader";
+import DrawerButton from "../components/DrawerButton";
 
-const HomeScreen = () => {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+interface HomeScreenProps {
+  navigation: NativeStackNavigationProp<RootStackParamList, "Home">;
+  openDrawer: () => void;
+}
+
+const HomeScreen: React.FC<HomeScreenProps> = ({ openDrawer }) => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [hasSavedTranscription, setHasSavedTranscription] = useState(false);
 
   useEffect(() => {
@@ -26,8 +31,13 @@ const HomeScreen = () => {
     checkSavedTranscriptions();
   }, []);
 
+  const navigateToTranscription = () => {
+    navigation.navigate("SavedTranscriptions");
+  };
+
   return (
     <View style={styles.container}>
+      <DrawerButton onPress={openDrawer} />
       <Text style={styles.title}>Transcreva seu Áudio</Text>
       <View style={styles.buttonsRow}>
         <AudioUploader />
@@ -36,7 +46,7 @@ const HomeScreen = () => {
       {hasSavedTranscription && (
         <TouchableOpacity
           style={styles.savedTranscriptionsButton}
-          onPress={() => navigation.navigate("SavedTranscriptions")}
+          onPress={navigateToTranscription}
         >
           <FontAwesome name="file-text" size={20} color="#fff" />
           <Text style={styles.savedTranscriptionsButtonText}>

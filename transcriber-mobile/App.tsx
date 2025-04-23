@@ -1,33 +1,80 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from './screens/HomeScreen';
-import TranscriptionScreen from './screens/TranscriptionScreen';
-import SavedTranscriptionsScreen from './screens/SavedTranscriptionsScreen';
+import React, { useRef, useState } from "react";
+import { DrawerLayoutAndroid, StyleSheet } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import HomeScreen from "./screens/HomeScreen";
+import TranscriptionScreen from "./screens/TranscriptionScreen";
+import SavedTranscriptionsScreen from "./screens/SavedTranscriptionsScreen";
+import DrawerContent from "./components/DrawerContent";
 
 export type RootStackParamList = {
   Home: undefined;
-  Transcription: { transcription: string, id: string };
+  Transcription: { transcription: string; id: string };
   SavedTranscriptions: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
 
 const App = () => {
+  const drawer = useRef<DrawerLayoutAndroid>(null);
+  const [drawerPosition] = useState<"left" | "right">("left");
+
+  const openDrawer = () => {
+    drawer.current?.openDrawer();
+  };
+
+  const closeDrawer = () => {
+    drawer.current?.closeDrawer();
+  };
+
+  const navigationView = () => <DrawerContent closeDrawer={closeDrawer} />;
+
   return (
     <NavigationContainer>
-      <Stack.Navigator 
-        initialRouteName="Home"
-        screenOptions={{
-          headerShown: false,
-        }}
+      <DrawerLayoutAndroid
+        ref={drawer}
+        drawerWidth={300}
+        drawerPosition={drawerPosition}
+        renderNavigationView={navigationView}
       >
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Transcription" component={TranscriptionScreen} />
-        <Stack.Screen name="SavedTranscriptions" component={SavedTranscriptionsScreen} /> 
-      </Stack.Navigator>
+        <Stack.Navigator
+          initialRouteName="Home"
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name="Home">
+            {(props) => <HomeScreen {...props} openDrawer={openDrawer} />}
+          </Stack.Screen>
+          <Stack.Screen name="Transcription" component={TranscriptionScreen} />
+          <Stack.Screen name="SavedTranscriptions">
+            {(props) => (
+              <SavedTranscriptionsScreen {...props} openDrawer={openDrawer} />
+            )}
+          </Stack.Screen>
+        </Stack.Navigator>
+      </DrawerLayoutAndroid>
     </NavigationContainer>
   );
 };
+
+const styles = StyleSheet.create({
+  navigationContainer: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: "#f0f0f0",
+  },
+  drawerHeaderText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 16,
+  },
+  mainContent: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
+  },
+});
 
 export default App;

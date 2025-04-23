@@ -12,6 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { FontAwesome } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import DrawerButton from "../components/DrawerButton";
 
 type RootStackParamList = {
   Home: undefined;
@@ -24,7 +25,13 @@ type NavigationProp = NativeStackNavigationProp<
   "SavedTranscriptions"
 >;
 
-const SavedTranscriptionsScreen: React.FC = () => {
+interface SavedTranscriptionsScreenProps {
+  openDrawer: () => void;
+}
+
+const SavedTranscriptionsScreen: React.FC<SavedTranscriptionsScreenProps> = ({
+  openDrawer,
+}) => {
   const [transcriptions, setTranscriptions] = useState<
     { id: string; text: string; createdAt: string }[]
   >([]);
@@ -91,16 +98,13 @@ const SavedTranscriptionsScreen: React.FC = () => {
     setModalVisible(true);
   };
 
+  const navigateToHome = () => {
+    navigation.navigate("Home");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* Botão para voltar à tela Home */}
-      <TouchableOpacity
-        style={styles.homeButton}
-        onPress={() => navigation.navigate("Home")}
-      >
-        <FontAwesome name="home" size={24} color="#fff" />
-      </TouchableOpacity>
-
+      <DrawerButton onPress={openDrawer} />
       <Text style={styles.title}>Transcrições Salvas</Text>
       <FlatList
         data={transcriptions}
