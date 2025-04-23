@@ -30,5 +30,3 @@ export const uploadAudioAndGetTranscription = async (
     console.error(error);
   }
 };
-
-// "http://192.168.0.124:3000/api/transcriber/upload"

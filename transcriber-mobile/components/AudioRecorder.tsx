@@ -82,8 +82,12 @@ const AudioRecorder = () => {
           const audioFile = await getFileFromUri(uri, "recording.wav");
           setLoading(true);
           setLoadingMessage("Processando áudio...");
-          await uploadAudioAndGetTranscription(audioFile, navigation);
-          setLoadingMessage("Recebendo transcrição...");
+          await uploadAudioAndGetTranscription(audioFile, navigation)
+            .then(() => {
+              setLoadingMessage("Recebendo transcrição...");
+            }).finally(() => {
+              setLoading(false);
+            })
         } catch (error) {
           setMessage("Erro ao processar o arquivo de áudio.");
           console.error(error);

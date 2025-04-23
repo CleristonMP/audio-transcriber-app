@@ -1,0 +1,30 @@
+{
+  "home": {
+    "title": "Ajuda - Tela Inicial",
+    "description": "Nesta tela, você pode:",
+    "items": [
+      "Gravar um áudio para ser transcrito, usando o botão do microfone.",
+      "Fazer upload de áudios salvos em seu dispositivo para transcrição, usando o botão com o ícone de pasta.",
+      "Navegar para as transcrições que você já tem salvas."
+    ]
+  },
+  "savedTranscriptions": {
+    "title": "Ajuda - Transcrições Salvas",
+    "description": "Nesta tela, você pode:",
+    "items": [
+      "Visualizar todas as transcrições que você salvou anteriormente.",
+      "Editar uma transcrição tocando no ícone de edição. Use o botão de lápis.",
+      "Excluir uma transcrição tocando no ícone de lixeira. Use o botão de lixeira."
+    ]
+  },
+  "transcription": {
+    "title": "Ajuda - Tela de Transcrição",
+    "description": "Nesta tela, você pode:",
+    "items": [
+      "Visualizar a transcrição selecionada.",
+      "Editar o texto da transcrição conforme necessário.",
+      "Salvar as alterações feitas na transcrição. Use o botão de salvar (ícone de disquete).",
+      "Compartilhar a transcrição por meio de outros aplicativos instalados no seu dispositivo. Use o botão de compartilhamento (seta curva)."
+    ]
+  }
+}

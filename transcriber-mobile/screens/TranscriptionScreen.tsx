@@ -13,16 +13,16 @@ import { FontAwesome } from "@expo/vector-icons";
 import { exportText } from "../utils/exportText";
 import { loadEditedText, saveEditedText } from "../utils/storageUtils";
 import AnimatedButton from "../components/AnimatedButton";
+import DrawerButton from "../components/DrawerButton";
+import HelpButton from "../components/HelpButton";
+import helpTexts from "../assets/helpTexts.json";
+import { RootStackParamList } from "../App";
 
-type RootStackParamList = {
-  Home: undefined;
-  Transcription: { transcription: string; id: string };
-  SavedTranscriptions: { id?: string } | undefined;
+type Props = NativeStackScreenProps<RootStackParamList, "Transcription"> & {
+  openDrawer?: () => void;
 };
 
-type Props = NativeStackScreenProps<RootStackParamList, "Transcription">;
-
-const TranscriptionScreen: React.FC<Props> = ({ route, navigation }: Props) => {
+const TranscriptionScreen: React.FC<Props> = ({ route, navigation, openDrawer }: Props) => {
   const { transcription, id } = route.params;
   const [editedText, setEditedText] = useState(transcription);
   const [modalVisible, setModalVisible] = useState(false);
@@ -35,8 +35,7 @@ const TranscriptionScreen: React.FC<Props> = ({ route, navigation }: Props) => {
 
   const handleExport = async () => {
     try {
-      await exportText(editedText);
-      Alert.alert("Sucesso", "Transcrição exportada com sucesso!");
+      await exportText(editedText)
     } catch (error) {
       Alert.alert(
         "Erro",
@@ -50,14 +49,11 @@ const TranscriptionScreen: React.FC<Props> = ({ route, navigation }: Props) => {
     try {
       const savedId = await saveEditedText(id || null, editedText);
       setModalVisible(false);
-      // navigation.navigate("SavedTranscriptions");
-      
-      // Reseta a navegação para ir diretamente para a tela `SavedTranscriptionsScreen`
       navigation.reset({
         index: 0,
         routes: [
-          { name: "Home" }, // Define a tela `Home` como a base da pilha
-          { name: "SavedTranscriptions", params: { id: savedId } }, // Adiciona a tela `SavedTranscriptionsScreen` no topo
+          { name: "Home" },
+          { name: "SavedTranscriptions", params: { id: savedId } },
         ],
       });
     } catch (error) {
@@ -67,6 +63,17 @@ const TranscriptionScreen: React.FC<Props> = ({ route, navigation }: Props) => {
 
   return (
     <View style={styles.container}>
+      {/* Botão para abrir o drawer */}
+      {openDrawer && <DrawerButton onPress={openDrawer} />}
+
+      {/* Botão de ajuda */}
+      <HelpButton
+        title={helpTexts.transcription.title}
+        description={helpTexts.transcription.description}
+        items={helpTexts.transcription.items}
+      />
+
+      {/* Conteúdo principal */}
       <Text style={styles.title}>Editar Transcrição</Text>
       <TextInput
         style={styles.textInput}

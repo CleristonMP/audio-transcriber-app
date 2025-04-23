@@ -46,7 +46,13 @@ const App = () => {
           <Stack.Screen name="Home">
             {(props) => <HomeScreen {...props} openDrawer={openDrawer} />}
           </Stack.Screen>
-          <Stack.Screen name="Transcription" component={TranscriptionScreen} />
+
+          <Stack.Screen name="Transcription">
+            {(props) => (
+              <TranscriptionScreen {...props} openDrawer={openDrawer} />
+            )}
+          </Stack.Screen>
+
           <Stack.Screen name="SavedTranscriptions">
             {(props) => (
               <SavedTranscriptionsScreen {...props} openDrawer={openDrawer} />

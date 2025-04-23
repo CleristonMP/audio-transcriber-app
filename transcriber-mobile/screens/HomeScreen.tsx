@@ -8,6 +8,8 @@ import { RootStackParamList } from "../App";
 import AudioRecorder from "../components/AudioRecorder";
 import AudioUploader from "../components/AudioUploader";
 import DrawerButton from "../components/DrawerButton";
+import HelpButton from "../components/HelpButton";
+import helpTexts from "../assets/helpTexts.json";
 
 interface HomeScreenProps {
   navigation: NativeStackNavigationProp<RootStackParamList, "Home">;
@@ -15,7 +17,8 @@ interface HomeScreenProps {
 }
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ openDrawer }) => {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [hasSavedTranscription, setHasSavedTranscription] = useState(false);
 
   useEffect(() => {
@@ -38,6 +41,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ openDrawer }) => {
   return (
     <View style={styles.container}>
       <DrawerButton onPress={openDrawer} />
+      <HelpButton
+        title={helpTexts.home.title}
+        description={helpTexts.home.description}
+        items={helpTexts.home.items}
+      />
       <Text style={styles.title}>Transcreva seu Áudio</Text>
       <View style={styles.buttonsRow}>
         <AudioUploader />
