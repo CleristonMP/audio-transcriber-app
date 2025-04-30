@@ -1,14 +1,14 @@
-'use client';
-import React, { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+"use client";
+import React, { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Editor,
   EditorState,
   ContentState,
   RichUtils,
   Modifier,
-} from 'draft-js';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+} from "draft-js";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBold,
   faItalic,
@@ -17,31 +17,43 @@ import {
   faListOl,
   faEraser,
   faSave,
-} from '@fortawesome/free-solid-svg-icons';
-import 'draft-js/dist/Draft.css';
-import { v4 as uuidv4 } from 'uuid';
-import { addTranscription } from '@/services/localStorageService';
-import MessageModal from '@/components/MessageModal';
+} from "@fortawesome/free-solid-svg-icons";
+import "draft-js/dist/Draft.css";
+import { v4 as uuidv4 } from "uuid";
+import {
+  getTranscriptions,
+  saveTranscriptions,
+} from "@/services/localStorageService";
+import MessageModal from "@/components/MessageModal";
 
 const TranscriptionScreen: React.FC = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const text = searchParams?.get('text') || ''; // Obtém o texto da transcrição
-
-  // Inicializa o estado do editor com o texto transcrito
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createWithContent(ContentState.createFromText(text))
-  );
-
+  const id = searchParams?.get("id");
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (id) {
+      const transcriptions = getTranscriptions();
+      const transcriptionToEdit = transcriptions.find((t) => t.id === id);
+      if (transcriptionToEdit) {
+        setEditorState(
+          EditorState.createWithContent(
+            ContentState.createFromText(transcriptionToEdit.text)
+          )
+        );
+      }
+    }
+  }, [id]);
 
   const handleKeyCommand = (command: string, editorState: EditorState) => {
     const newState = RichUtils.handleKeyCommand(editorState, command);
     if (newState) {
       setEditorState(newState);
-      return 'handled';
+      return "handled";
     }
-    return 'not-handled';
+    return "not-handled";
   };
 
   const toggleInlineStyle = (style: string) => {
@@ -57,7 +69,7 @@ const TranscriptionScreen: React.FC = () => {
     const contentState = editorState.getCurrentContent();
 
     // Remove todas as estilizações inline da seleção atual
-    const styles = ['BOLD', 'ITALIC', 'UNDERLINE'];
+    const styles = ["BOLD", "ITALIC", "UNDERLINE"];
     let newContentState = contentState;
 
     styles.forEach((style) => {
@@ -71,7 +83,7 @@ const TranscriptionScreen: React.FC = () => {
     const newEditorState = EditorState.push(
       editorState,
       newContentState,
-      'change-inline-style'
+      "change-inline-style"
     );
     setEditorState(newEditorState);
   };
@@ -80,15 +92,34 @@ const TranscriptionScreen: React.FC = () => {
     const content = editorState.getCurrentContent();
     const text = content.getPlainText(); // Obtém o texto puro do editor
 
-    // Cria uma nova transcrição com ID único e data atual
-    const newTranscription = {
-      id: uuidv4(),
-      text,
-      date: new Date().toLocaleString(), // Data e hora formatadas
-    };
+    // // Cria uma nova transcrição com ID único e data atual
+    // const newTranscription = {
+    //   id: uuidv4(),
+    //   text,
+    //   date: new Date().toLocaleString(), // Data e hora formatadas
+    // };
 
-    // Adiciona a nova transcrição ao localStorage
-    addTranscription(newTranscription);
+    // // Adiciona a nova transcrição ao localStorage
+    // addTranscription(newTranscription);
+
+    const transcriptions = getTranscriptions();
+
+    if (id) {
+      // Atualiza a transcrição existente
+      const updatedTranscriptions = transcriptions.map((t) =>
+        t.id === id ? { ...t, text } : t
+      );
+      saveTranscriptions(updatedTranscriptions);
+    } else {
+      // Cria uma nova transcrição
+      const newTranscription = {
+        id: uuidv4(),
+        text,
+        date: new Date().toLocaleString(),
+      };
+      transcriptions.push(newTranscription);
+      saveTranscriptions(transcriptions);
+    }
 
     // Exibe o modal de confirmação
     setIsModalOpen(true);
@@ -96,7 +127,7 @@ const TranscriptionScreen: React.FC = () => {
 
   const handleModalConfirm = () => {
     setIsModalOpen(false);
-    router.push('/saved-transcriptions'); // Redireciona para a página de transcrições salvas
+    router.push("/saved-transcriptions"); // Redireciona para a página de transcrições salvas
   };
 
   return (
@@ -108,7 +139,7 @@ const TranscriptionScreen: React.FC = () => {
           {/* Botão de Negrito */}
           <div className="relative">
             <button
-              onClick={() => toggleInlineStyle('BOLD')}
+              onClick={() => toggleInlineStyle("BOLD")}
               className="p-2 shadow-md hover:bg-gray-300 focus:outline-none transition-all duration-200"
               aria-label="Negrito"
             >
@@ -122,7 +153,7 @@ const TranscriptionScreen: React.FC = () => {
           {/* Botão de Itálico */}
           <div className="relative">
             <button
-              onClick={() => toggleInlineStyle('ITALIC')}
+              onClick={() => toggleInlineStyle("ITALIC")}
               className="p-2 shadow-md hover:bg-gray-300 focus:outline-none transition-all duration-200"
               aria-label="Itálico"
             >
@@ -136,7 +167,7 @@ const TranscriptionScreen: React.FC = () => {
           {/* Botão de Sublinhado */}
           <div className="relative">
             <button
-              onClick={() => toggleInlineStyle('UNDERLINE')}
+              onClick={() => toggleInlineStyle("UNDERLINE")}
               className="p-2 shadow-md hover:bg-gray-300 focus:outline-none transition-all duration-200"
               aria-label="Sublinhado"
             >
@@ -150,7 +181,7 @@ const TranscriptionScreen: React.FC = () => {
           {/* Botão de Lista com Marcadores */}
           <div className="relative">
             <button
-              onClick={() => toggleBlockType('unordered-list-item')}
+              onClick={() => toggleBlockType("unordered-list-item")}
               className="p-2 shadow-md hover:bg-gray-300 focus:outline-none transition-all duration-200"
               aria-label="Lista com Marcadores"
             >
@@ -164,7 +195,7 @@ const TranscriptionScreen: React.FC = () => {
           {/* Botão de Lista Numerada */}
           <div className="relative">
             <button
-              onClick={() => toggleBlockType('ordered-list-item')}
+              onClick={() => toggleBlockType("ordered-list-item")}
               className="p-2 shadow-md hover:bg-gray-300 focus:outline-none transition-all duration-200"
               aria-label="Lista Numerada"
             >

@@ -6,9 +6,13 @@ import {
   deleteTranscription,
   clearTranscriptions,
 } from '@/services/localStorageService';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { useRouter } from 'next/navigation';
 
 const SavedTranscriptionsScreen: React.FC = () => {
   const [transcriptions, setTranscriptions] = useState(getTranscriptions());
+  const router = useRouter();
 
   // Exclui uma transcrição específica
   const handleDelete = (id: string) => {
@@ -20,7 +24,7 @@ const SavedTranscriptionsScreen: React.FC = () => {
   const handleEdit = (id: string) => {
     const transcriptionToEdit = transcriptions.find((t) => t.id === id);
     if (transcriptionToEdit) {
-      window.location.href = `/transcription?text=${encodeURIComponent(transcriptionToEdit.text)}`;
+      router.push(`/transcription?id=${id}`);
     }
   };
 
@@ -55,9 +59,10 @@ const SavedTranscriptionsScreen: React.FC = () => {
       {transcriptions.length > 0 && (
         <button
           onClick={handleDeleteAll}
-          className="mt-6 px-6 py-3 bg-red-500 text-white rounded-lg shadow-lg hover:bg-red-600 focus:outline-none"
+          className="mt-6 py-2 px-4 flex rounded-full items-center space-x-2 text-red-500 hover:shadow-md hover:bg-red-100 focus:outline-none transition-all duration-500"
         >
-          Deletar Todas as Transcrições
+          <FontAwesomeIcon icon={faTrash} />
+          <span>Deletar todas as transcrições</span>
         </button>
       )}
     </div>

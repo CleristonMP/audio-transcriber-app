@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPaperPlane, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -9,6 +9,12 @@ interface ConfirmationModalProps {
   message: string;
   onConfirm: () => void;
   onCancel: () => void;
+  confirmIcon?: IconDefinition; // Ícone do botão de confirmação
+  cancelIcon?: IconDefinition; // Ícone do botão de cancelamento
+  confirmColor?: string; // Cor do botão de confirmação
+  cancelColor?: string; // Cor do botão de cancelamento
+  confirmTooltip?: string; // Tooltip do botão de confirmação
+  cancelTooltip?: string; // Tooltip do botão de cancelamento
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -17,6 +23,12 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   message,
   onConfirm,
   onCancel,
+  confirmIcon,
+  cancelIcon,
+  confirmColor = 'text-blue-500', // Cor padrão para confirmar
+  cancelColor = 'text-red-500', // Cor padrão para cancelar
+  confirmTooltip = 'Confirmar', // Tooltip padrão para confirmar
+  cancelTooltip = 'Cancelar', // Tooltip padrão para cancelar
 }) => {
   if (!isOpen) return null;
 
@@ -26,31 +38,31 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         <h2 className="text-xl font-bold mb-4">{title}</h2>
         <p className="mb-6">{message}</p>
         <div className="flex justify-center space-x-10 relative">
-          {/* Ícone de Cancelar com Tooltip */}
+          {/* Botão de Cancelar */}
           <div className="group relative">
             <button
-              className="flex items-center justify-center text-red-500 hover:text-red-600 focus:outline-none"
+              className={`flex items-center justify-center ${cancelColor} hover:opacity-80 focus:outline-none`}
               onClick={onCancel}
               aria-label="Cancelar"
             >
-              <FontAwesomeIcon icon={faTimes} className="text-3xl" />
+              {cancelIcon && <FontAwesomeIcon icon={cancelIcon} className="text-3xl" />}
             </button>
             <span className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              Cancelar
+              {cancelTooltip}
             </span>
           </div>
 
-          {/* Ícone de Confirmar com Tooltip */}
+          {/* Botão de Confirmar */}
           <div className="group relative">
             <button
-              className="flex items-center justify-center text-blue-500 hover:text-blue-600 focus:outline-none"
+              className={`flex items-center justify-center ${confirmColor} hover:opacity-80 focus:outline-none`}
               onClick={onConfirm}
               aria-label="Confirmar"
             >
-              <FontAwesomeIcon icon={faPaperPlane} className="text-3xl" />
+              {confirmIcon && <FontAwesomeIcon icon={confirmIcon} className="text-3xl" />}
             </button>
             <span className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              Enviar
+              {confirmTooltip}
             </span>
           </div>
         </div>

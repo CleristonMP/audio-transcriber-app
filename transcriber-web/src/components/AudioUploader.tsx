@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation"; // Hook para navegação
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFolderOpen } from "@fortawesome/free-solid-svg-icons";
+import { faFolderOpen, faPaperPlane, faTimes } from "@fortawesome/free-solid-svg-icons";
 import ConfirmationModal from "./ConfirmationModal";
 import ErrorModal from "./ErrorModal";
 
@@ -91,6 +91,12 @@ const AudioUploader = () => {
         message={`Deseja enviar o arquivo "${file?.name}" para transcrição?`}
         onConfirm={handleConfirm}
         onCancel={handleCancel}
+        confirmIcon={faPaperPlane} // Ícone de avião de papel para enviar
+        cancelIcon={faTimes} // Ícone de "x" para cancelar
+        confirmColor="text-blue-500" // Cor azul para enviar
+        cancelColor="text-red-500" // Cor vermelha para cancelar
+        confirmTooltip="Enviar"
+        cancelTooltip="Cancelar"
       />
 
       {/* Loader */}
