@@ -3,10 +3,12 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
 import ConfirmationModal from './ConfirmationModal';
+import { convertFromRaw } from 'draft-js';
+import { stateToHTML } from 'draft-js-export-html';
 
 interface TranscriptionCardProps {
   id: string;
-  text: string;
+  text: any;
   date: string;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
@@ -28,6 +30,17 @@ const TranscriptionCard: React.FC<TranscriptionCardProps> = ({ id, text, date, o
     setIsModalOpen(false); // Fecha o modal sem excluir
   };
 
+    // Converte o conteúdo serializado em HTML
+    const renderStyledText = () => {
+      try {
+        const contentState = convertFromRaw(text); // Converte o conteúdo salvo
+        return stateToHTML(contentState); // Converte para HTML
+      } catch (error) {
+        console.error('Erro ao renderizar o conteúdo estilizado:', error);
+        return '<p>Erro ao carregar o conteúdo.</p>';
+      }
+    };
+
   return (
     <div className="bg-white rounded-lg shadow-md p-4 mb-4">
       {/* Cabeçalho com a data e hora */}
@@ -37,7 +50,11 @@ const TranscriptionCard: React.FC<TranscriptionCardProps> = ({ id, text, date, o
         </span>
       </div>
       {/* Texto da transcrição */}
-      <p className="text-gray-700 text-sm whitespace-pre-wrap mb-4">{text}</p>
+      <div
+        className="text-gray-700 text-sm whitespace-pre-wrap mb-4"
+        dangerouslySetInnerHTML={{ __html: renderStyledText() }}
+      ></div>
+      {/* <p className="text-gray-700 text-sm whitespace-pre-wrap mb-4">{text}</p> */}
       {/* Botões de ação */}
       <div className="flex justify-end space-x-2">
         {/* Botão de Editar */}

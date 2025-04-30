@@ -1,6 +1,8 @@
+import { RawDraftContentState } from "draft-js";
+
 export interface Transcription {
   id: string;
-  text: string;
+  text: string | RawDraftContentState;
   date: string;
 }
 

@@ -48,6 +48,7 @@ const AudioUploader = () => {
 
         // Navega para a página TranscriptionScreen, passando o texto transcrito
         router.push(`/transcription?text=${encodeURIComponent(data.transcription)}`);
+        
       } catch (error: any) {
         if (error.message === "Failed to fetch") {
           setErrorMessage("Não foi possível conectar ao servidor. Verifique sua conexão com a internet.");

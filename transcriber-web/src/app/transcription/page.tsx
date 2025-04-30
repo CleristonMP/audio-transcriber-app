@@ -7,6 +7,8 @@ import {
   ContentState,
   RichUtils,
   Modifier,
+  convertFromRaw,
+  convertToRaw,
 } from "draft-js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -30,8 +32,13 @@ const TranscriptionScreen: React.FC = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const id = searchParams?.get("id");
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const text = searchParams?.get("text") || "";
+
+  const [editorState, setEditorState] = useState(
+    EditorState.createWithContent(ContentState.createFromText(text)) ||
+      EditorState.createEmpty()
+  );
 
   useEffect(() => {
     if (id) {
@@ -40,7 +47,9 @@ const TranscriptionScreen: React.FC = () => {
       if (transcriptionToEdit) {
         setEditorState(
           EditorState.createWithContent(
-            ContentState.createFromText(transcriptionToEdit.text)
+            typeof transcriptionToEdit.text === "string"
+              ? ContentState.createFromText(transcriptionToEdit.text)
+              : convertFromRaw(transcriptionToEdit.text)
           )
         );
       }
@@ -90,17 +99,8 @@ const TranscriptionScreen: React.FC = () => {
 
   const handleSave = () => {
     const content = editorState.getCurrentContent();
-    const text = content.getPlainText(); // Obtém o texto puro do editor
-
-    // // Cria uma nova transcrição com ID único e data atual
-    // const newTranscription = {
-    //   id: uuidv4(),
-    //   text,
-    //   date: new Date().toLocaleString(), // Data e hora formatadas
-    // };
-
-    // // Adiciona a nova transcrição ao localStorage
-    // addTranscription(newTranscription);
+    // const text = content.getPlainText();
+    const text = convertToRaw(content);
 
     const transcriptions = getTranscriptions();
 
