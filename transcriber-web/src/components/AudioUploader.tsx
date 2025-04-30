@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation"; // Hook para navegação
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFolderOpen } from "@fortawesome/free-solid-svg-icons";
 import ConfirmationModal from "./ConfirmationModal";
@@ -10,6 +11,7 @@ const AudioUploader = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const router = useRouter(); // Hook para navegação
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0] || null;
@@ -43,7 +45,9 @@ const AudioUploader = () => {
         }
 
         const data = await response.json();
-        console.log("Transcrição recebida:", data.transcription); // Imprime a transcrição no console
+
+        // Navega para a página TranscriptionScreen, passando o texto transcrito
+        router.push(`/transcription?text=${encodeURIComponent(data.transcription)}`);
       } catch (error: any) {
         if (error.message === "Failed to fetch") {
           setErrorMessage("Não foi possível conectar ao servidor. Verifique sua conexão com a internet.");
