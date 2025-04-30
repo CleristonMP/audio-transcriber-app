@@ -1,17 +1,39 @@
 'use client';
 import React, { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { Editor, EditorState, ContentState, RichUtils } from 'draft-js';
+import { useRouter, useSearchParams } from 'next/navigation';
+import {
+  Editor,
+  EditorState,
+  ContentState,
+  RichUtils,
+  Modifier,
+} from 'draft-js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faBold,
+  faItalic,
+  faUnderline,
+  faListUl,
+  faListOl,
+  faEraser,
+  faSave,
+} from '@fortawesome/free-solid-svg-icons';
 import 'draft-js/dist/Draft.css';
+import { v4 as uuidv4 } from 'uuid';
+import { addTranscription } from '@/services/localStorageService';
+import MessageModal from '@/components/MessageModal';
 
 const TranscriptionScreen: React.FC = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const text = searchParams?.get('text') || ''; // Obtém o texto da transcrição
 
   // Inicializa o estado do editor com o texto transcrito
   const [editorState, setEditorState] = useState(() =>
     EditorState.createWithContent(ContentState.createFromText(text))
   );
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleKeyCommand = (command: string, editorState: EditorState) => {
     const newState = RichUtils.handleKeyCommand(editorState, command);
@@ -26,11 +48,55 @@ const TranscriptionScreen: React.FC = () => {
     setEditorState(RichUtils.toggleInlineStyle(editorState, style));
   };
 
+  const toggleBlockType = (blockType: string) => {
+    setEditorState(RichUtils.toggleBlockType(editorState, blockType));
+  };
+
+  const clearInlineStyles = () => {
+    const selection = editorState.getSelection();
+    const contentState = editorState.getCurrentContent();
+
+    // Remove todas as estilizações inline da seleção atual
+    const styles = ['BOLD', 'ITALIC', 'UNDERLINE'];
+    let newContentState = contentState;
+
+    styles.forEach((style) => {
+      newContentState = Modifier.removeInlineStyle(
+        newContentState,
+        selection,
+        style
+      );
+    });
+
+    const newEditorState = EditorState.push(
+      editorState,
+      newContentState,
+      'change-inline-style'
+    );
+    setEditorState(newEditorState);
+  };
+
   const handleSave = () => {
     const content = editorState.getCurrentContent();
-    const rawContent = JSON.stringify(content);
-    localStorage.setItem('transcription', rawContent);
-    alert('Transcrição salva com sucesso!');
+    const text = content.getPlainText(); // Obtém o texto puro do editor
+
+    // Cria uma nova transcrição com ID único e data atual
+    const newTranscription = {
+      id: uuidv4(),
+      text,
+      date: new Date().toLocaleString(), // Data e hora formatadas
+    };
+
+    // Adiciona a nova transcrição ao localStorage
+    addTranscription(newTranscription);
+
+    // Exibe o modal de confirmação
+    setIsModalOpen(true);
+  };
+
+  const handleModalConfirm = () => {
+    setIsModalOpen(false);
+    router.push('/saved-transcriptions'); // Redireciona para a página de transcrições salvas
   };
 
   return (
@@ -38,25 +104,90 @@ const TranscriptionScreen: React.FC = () => {
       <h1 className="text-3xl font-bold mb-6">Editor de Transcrição</h1>
       <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-4">
         {/* Barra de ferramentas para estilização */}
-        <div className="mb-4 flex space-x-2">
-          <button
-            onClick={() => toggleInlineStyle('BOLD')}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Negrito
-          </button>
-          <button
-            onClick={() => toggleInlineStyle('ITALIC')}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Itálico
-          </button>
-          <button
-            onClick={() => toggleInlineStyle('UNDERLINE')}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Sublinhado
-          </button>
+        <div className="mb-4 flex space-x-2 justify-end">
+          {/* Botão de Negrito */}
+          <div className="relative">
+            <button
+              onClick={() => toggleInlineStyle('BOLD')}
+              className="p-2 shadow-md hover:bg-gray-300 focus:outline-none transition-all duration-200"
+              aria-label="Negrito"
+            >
+              <FontAwesomeIcon icon={faBold} className="text-xl" />
+            </button>
+            <span className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              Negrito
+            </span>
+          </div>
+
+          {/* Botão de Itálico */}
+          <div className="relative">
+            <button
+              onClick={() => toggleInlineStyle('ITALIC')}
+              className="p-2 shadow-md hover:bg-gray-300 focus:outline-none transition-all duration-200"
+              aria-label="Itálico"
+            >
+              <FontAwesomeIcon icon={faItalic} className="text-xl" />
+            </button>
+            <span className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              Itálico
+            </span>
+          </div>
+
+          {/* Botão de Sublinhado */}
+          <div className="relative">
+            <button
+              onClick={() => toggleInlineStyle('UNDERLINE')}
+              className="p-2 shadow-md hover:bg-gray-300 focus:outline-none transition-all duration-200"
+              aria-label="Sublinhado"
+            >
+              <FontAwesomeIcon icon={faUnderline} className="text-xl" />
+            </button>
+            <span className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              Sublinhado
+            </span>
+          </div>
+
+          {/* Botão de Lista com Marcadores */}
+          <div className="relative">
+            <button
+              onClick={() => toggleBlockType('unordered-list-item')}
+              className="p-2 shadow-md hover:bg-gray-300 focus:outline-none transition-all duration-200"
+              aria-label="Lista com Marcadores"
+            >
+              <FontAwesomeIcon icon={faListUl} className="text-xl" />
+            </button>
+            <span className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              Lista com Marcadores
+            </span>
+          </div>
+
+          {/* Botão de Lista Numerada */}
+          <div className="relative">
+            <button
+              onClick={() => toggleBlockType('ordered-list-item')}
+              className="p-2 shadow-md hover:bg-gray-300 focus:outline-none transition-all duration-200"
+              aria-label="Lista Numerada"
+            >
+              <FontAwesomeIcon icon={faListOl} className="text-xl" />
+            </button>
+            <span className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              Lista Numerada
+            </span>
+          </div>
+
+          {/* Botão de Limpar Estilização */}
+          <div className="relative">
+            <button
+              onClick={clearInlineStyles}
+              className="p-2 shadow-md hover:bg-gray-300 focus:outline-none transition-all duration-200"
+              aria-label="Limpar Estilização"
+            >
+              <FontAwesomeIcon icon={faEraser} className="text-xl" />
+            </button>
+            <span className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              Limpar Estilização
+            </span>
+          </div>
         </div>
 
         {/* Editor de texto */}
@@ -69,12 +200,27 @@ const TranscriptionScreen: React.FC = () => {
           />
         </div>
       </div>
-      <button
-        onClick={handleSave}
-        className="mt-6 px-6 py-3 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none"
-      >
-        Salvar Transcrição
-      </button>
+
+      {/* Botão de Salvar Transcrição */}
+      <div className="group relative">
+        <button
+          onClick={handleSave}
+          className="mt-6 px-6 py-3 shadow-md hover:bg-green-300 focus:outline-none transition-all duration-200"
+          aria-label="Salvar Transcrição"
+        >
+          <FontAwesomeIcon icon={faSave} className="text-xl" />
+        </button>
+        <span className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          Salvar Transcrição
+        </span>
+      </div>
+
+      {/* Modal de Confirmação */}
+      <MessageModal
+        isOpen={isModalOpen}
+        message="Transcrição salva com sucesso!"
+        onConfirm={handleModalConfirm}
+      />
     </div>
   );
 };
