@@ -116,7 +116,7 @@ const AudioRecorder: React.FC = () => {
             </div>
           )}
           <button
-            className={`p-4 rounded-full shadow-lg focus:outline-none ${
+            className={`p-4 px-6 flex rounded-full shadow-lg focus:outline-none ${
               isRecording
                 ? "bg-red-500 hover:bg-red-600"
                 : "bg-green-500 hover:bg-green-600"

@@ -9,6 +9,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/navigation';
+import NavigationDrawer from '@/components/NavigationDrawer';
 
 const SavedTranscriptionsScreen: React.FC = () => {
   const [transcriptions, setTranscriptions] = useState(getTranscriptions());
@@ -36,6 +37,7 @@ const SavedTranscriptionsScreen: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
+      <NavigationDrawer />
       <h1 className="text-3xl font-bold mb-6">Transcrições Salvas</h1>
       <div className="w-full max-w-4xl">
         {transcriptions.length > 0 ? (

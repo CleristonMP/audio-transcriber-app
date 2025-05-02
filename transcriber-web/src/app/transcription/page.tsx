@@ -99,7 +99,6 @@ const TranscriptionScreen: React.FC = () => {
 
   const handleSave = () => {
     const content = editorState.getCurrentContent();
-    // const text = content.getPlainText();
     const text = convertToRaw(content);
 
     const transcriptions = getTranscriptions();
@@ -127,7 +126,7 @@ const TranscriptionScreen: React.FC = () => {
 
   const handleModalConfirm = () => {
     setIsModalOpen(false);
-    router.push("/saved-transcriptions"); // Redireciona para a página de transcrições salvas
+    router.replace("/saved-transcriptions"); // Redireciona para a página de transcrições salvas
   };
 
   return (

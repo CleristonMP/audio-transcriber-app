@@ -80,7 +80,7 @@ const AudioUploader = () => {
       {/* Botão estilizado para upload */}
       <label
         htmlFor="audio-upload"
-        className="p-4 bg-blue-500 text-white rounded-full shadow-lg hover:bg-blue-600 focus:outline-none cursor-pointer flex items-center justify-center"
+        className="p-4 px-5 bg-orange-400 text-white rounded-full shadow-lg hover:bg-blue-600 focus:outline-none cursor-pointer flex items-center justify-center"
       >
         <FontAwesomeIcon icon={faFolderOpen} className="text-2xl" />
       </label>
