@@ -10,27 +10,35 @@ export const config = {
   },
 };
 
+const allowedMimeTypes = ['audio/webm', 'audio/wav'];
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
-    // Crie o diretório de uploads se não existir
     const uploadDir = path.join(process.cwd(), 'uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
+    createUploadDir(uploadDir);
 
     const form = new IncomingForm({
       uploadDir: uploadDir,
       keepExtensions: true,
+      maxFileSize: 10 * 1024 * 1024, // 10 MB
+    });
+
+    form.on('fileBegin', (_name, file) => {
+      if (!file.mimetype || !allowedMimeTypes.includes(file.mimetype)) {
+        throw new Error('Tipo de arquivo não suportado');
+      }
+      file.newFilename = `${Date.now()}-${file.originalFilename?.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
     });
 
     form.parse(req, (err, fields, files) => {
       if (err) {
-        res.status(500).json({ error: 'Erro no upload' });
+        console.error('Erro ao processar o formulário:', err);
+        res.status(500).json({ error: 'Erro ao processar o upload' });
         return;
       }
 
       const file = files.file as any;
-      
+
       if (!file) {
         res.status(400).json({ error: 'Nenhum arquivo enviado' });
         return;
@@ -44,5 +52,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } else {
     res.setHeader('Allow', ['POST']);
     res.status(405).end(`Método ${req.method} não permitido`);
+  }
+}
+
+function createUploadDir(uploadDir: string) {
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
   }
 }

@@ -1,18 +1,22 @@
-'use client';
-import React, { useState } from 'react';
-import TranscriptionCard from '@/components/TranscriptionCard';
+"use client";
+import React, { useState } from "react";
+import TranscriptionCard from "@/components/TranscriptionCard";
 import {
   getTranscriptions,
   deleteTranscription,
   clearTranscriptions,
-} from '@/services/localStorageService';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { useRouter } from 'next/navigation';
-import NavigationDrawer from '@/components/NavigationDrawer';
+} from "@/services/localStorageService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash, faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
+import { useRouter } from "next/navigation";
+import NavigationDrawer from "@/components/NavigationDrawer";
+import HelpModal from "@/components/HelpModal";
+import instructions from "@/data/instructions.json";
+import HelpButton from "@/components/HelpButton";
 
 const SavedTranscriptionsScreen: React.FC = () => {
   const [transcriptions, setTranscriptions] = useState(getTranscriptions());
+  const [isHelpOpen, setIsHelpOpen] = useState(false); // Estado para o modal de ajuda
   const router = useRouter();
 
   // Exclui uma transcrição específica
@@ -38,6 +42,18 @@ const SavedTranscriptionsScreen: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
       <NavigationDrawer />
+
+      {/* Botão de ajuda no topo direito */}
+      <HelpButton onClick={() => setIsHelpOpen(true)} />
+
+      {/* Modal de ajuda */}
+      <HelpModal
+        isOpen={isHelpOpen}
+        onClose={() => setIsHelpOpen(false)}
+        title={instructions.savedTranscriptionsScreen.title}
+        content={instructions.savedTranscriptionsScreen.content}
+      />
+
       <h1 className="text-3xl font-bold mb-6">Transcrições Salvas</h1>
       <div className="w-full max-w-4xl">
         {transcriptions.length > 0 ? (

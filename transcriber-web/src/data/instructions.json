@@ -1,0 +1,63 @@
+{
+  "home": {
+    "title": "Bem-vindo ao Audio Transcriber",
+    "content": [
+      {
+        "title": "Gravar Áudio",
+        "description": "Clique no botão de gravação para capturar áudio diretamente do seu microfone. Após finalizar a gravação, o áudio será processado automaticamente."
+      },
+      {
+        "title": "Fazer Upload de Áudio",
+        "description": "Use o botão de upload para enviar um arquivo de áudio existente do seu dispositivo."
+      },
+      {
+        "title": "Acessar Transcrições",
+        "description": "Após o processamento do áudio, você poderá acessar as transcrições salvas na página de transcrições."
+      }
+    ]
+  },
+  "transcriptionScreen": {
+    "title": "Tela de Transcrição",
+    "content": [
+      {
+        "title": "Editar Texto",
+        "description": "Clique no texto para começar a editar."
+      },
+      {
+        "title": "Formatar Texto",
+        "description": "Use os botões na barra de ferramentas para aplicar formatações como:",
+        "subitems": [
+          "Negrito",
+          "Itálico",
+          "Sublinhado",
+          "Listas Ordenadas e Não Ordenadas"
+        ]
+      },
+      {
+        "title": "Salvar Transcrição",
+        "description": "Após finalizar as edições, clique no botão de salvar para armazenar a transcrição."
+      }
+    ]
+  },
+  "savedTranscriptionsScreen": {
+    "title": "Transcrições Salvas",
+    "content": [
+      {
+        "title": "Visualizar Transcrição",
+        "description": "Clique em uma transcrição para visualizá-la ou editá-la novamente."
+      },
+      {
+        "title": "Excluir Transcrição",
+        "description": "Use o botão de lixeira ao lado de uma transcrição para excluí-la."
+      },
+      {
+        "title": "Excluir Todas as Transcrições",
+        "description": "Clique no botão \"Deletar todas as transcrições\" para remover todas as transcrições salvas."
+      },
+      {
+        "title": "Dica",
+        "description": "Certifique-se de salvar suas edições antes de sair da página de edição."
+      }
+    ]
+  }
+}
