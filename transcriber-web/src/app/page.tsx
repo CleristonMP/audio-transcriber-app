@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import AudioUploader from "@/components/AudioUploader";
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
+import AudioRecorder from "@/components/AudioRecorder";
 
 // Evita a adição automática de CSS pelo Font Awesome
 config.autoAddCss = false;
@@ -26,15 +27,7 @@ export default function Home() {
         <AudioUploader />
 
         {/* Botão para o componente AudioRecorder */}
-        <button
-          className="p-4 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 focus:outline-none"
-          onClick={() => {
-            // Lógica para abrir o componente AudioRecorder
-            console.log("Abrir AudioRecorder");
-          }}
-        >
-          <i className="fas fa-microphone text-2xl"></i>
-        </button>
+        <AudioRecorder />
       </div>
 
       {/* Botão para acessar transcrições salvas */}
