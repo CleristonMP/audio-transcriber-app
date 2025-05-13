@@ -9,12 +9,12 @@ interface ConfirmationModalProps {
   message: string;
   onConfirm: () => void;
   onCancel: () => void;
-  confirmIcon?: IconDefinition; // Ícone do botão de confirmação
-  cancelIcon?: IconDefinition; // Ícone do botão de cancelamento
-  confirmColor?: string; // Cor do botão de confirmação
-  cancelColor?: string; // Cor do botão de cancelamento
-  confirmTooltip?: string; // Tooltip do botão de confirmação
-  cancelTooltip?: string; // Tooltip do botão de cancelamento
+  confirmIcon?: IconDefinition; 
+  cancelIcon?: IconDefinition;
+  confirmColor?: string;
+  cancelColor?: string;
+  confirmTooltip?: string;
+  cancelTooltip?: string;
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -25,10 +25,10 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   onCancel,
   confirmIcon,
   cancelIcon,
-  confirmColor = 'text-blue-500', // Cor padrão para confirmar
-  cancelColor = 'text-red-500', // Cor padrão para cancelar
-  confirmTooltip = 'Confirmar', // Tooltip padrão para confirmar
-  cancelTooltip = 'Cancelar', // Tooltip padrão para cancelar
+  confirmColor = 'text-blue-500',
+  cancelColor = 'text-red-500',
+  confirmTooltip = 'Confirmar',
+  cancelTooltip = 'Cancelar',
 }) => {
   if (!isOpen) return null;
 

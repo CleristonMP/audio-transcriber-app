@@ -36,3 +36,11 @@ export const deleteTranscription = (id: string): void => {
 export const clearTranscriptions = (): void => {
   localStorage.removeItem(LOCAL_STORAGE_KEY);
 };
+
+export const hasSeenHelpModal = (): boolean => {
+  return !!localStorage.getItem("hasSeenHelpModal");
+};
+
+export const markHelpModalAsSeen = (): void => {
+  localStorage.setItem("hasSeenHelpModal", "true");
+};

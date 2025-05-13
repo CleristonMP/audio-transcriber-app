@@ -1,17 +1,26 @@
 "use client";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation"; // Hook para navegação
+import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFolderOpen, faPaperPlane, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+  faFolderOpen,
+  faPaperPlane,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons";
 import ConfirmationModal from "./ConfirmationModal";
 import ErrorModal from "./ErrorModal";
+import { uploadAudioFile } from "@/services/uploadService";
 
-const AudioUploader = () => {
+interface AudioUploaderProps {
+  disabled?: boolean;
+}
+
+const AudioUploader: React.FC<AudioUploaderProps> = ({ disabled = false }) => {
   const [file, setFile] = useState<File | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const router = useRouter(); // Hook para navegação
+  const router = useRouter();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0] || null;
@@ -28,30 +37,15 @@ const AudioUploader = () => {
       try {
         const formData = new FormData();
         formData.append("audio", file);
-
-        const response = await fetch("http://localhost:3000/api/transcriber/upload", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!response.ok) {
-          if (response.status === 500) {
-            throw new Error("Ocorreu um erro no servidor. Tente novamente mais tarde.");
-          } else if (response.status === 400) {
-            throw new Error("O arquivo enviado não é válido. Por favor, selecione um arquivo de áudio.");
-          } else {
-            throw new Error("Não foi possível processar o arquivo. Tente novamente.");
-          }
-        }
-
-        const data = await response.json();
-
-        // Navega para a página TranscriptionScreen, passando o texto transcrito
-        router.push(`/transcription?text=${encodeURIComponent(data.transcription)}`);
-        
+        const data = await uploadAudioFile(formData);
+        router.push(
+          `/transcription?text=${encodeURIComponent(data.transcription)}`
+        );
       } catch (error: any) {
         if (error.message === "Failed to fetch") {
-          setErrorMessage("Não foi possível conectar ao servidor. Verifique sua conexão com a internet.");
+          setErrorMessage(
+            "Não foi possível conectar ao servidor. Verifique sua conexão com a internet."
+          );
         } else {
           setErrorMessage(error.message || "Ocorreu um erro inesperado.");
         }
@@ -75,12 +69,17 @@ const AudioUploader = () => {
         accept="audio/*"
         onChange={handleFileChange}
         className="hidden"
+        disabled={disabled}
       />
 
       {/* Botão estilizado para upload */}
       <label
         htmlFor="audio-upload"
-        className="p-4 px-5 bg-orange-400 text-white rounded-full shadow-lg hover:bg-blue-600 focus:outline-none cursor-pointer flex items-center justify-center"
+        className={`p-4 px-5 bg-orange-400 text-white rounded-full shadow-lg hover:bg-blue-600 focus:outline-none cursor-pointer flex items-center justify-center ${
+          disabled
+            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+            : "bg-orange-400 text-white hover:bg-blue-600"
+        }`}
       >
         <FontAwesomeIcon icon={faFolderOpen} className="text-2xl" />
       </label>
@@ -92,10 +91,10 @@ const AudioUploader = () => {
         message={`Deseja enviar o arquivo "${file?.name}" para transcrição?`}
         onConfirm={handleConfirm}
         onCancel={handleCancel}
-        confirmIcon={faPaperPlane} // Ícone de avião de papel para enviar
-        cancelIcon={faTimes} // Ícone de "x" para cancelar
-        confirmColor="text-blue-500" // Cor azul para enviar
-        cancelColor="text-red-500" // Cor vermelha para cancelar
+        confirmIcon={faPaperPlane}
+        cancelIcon={faTimes}
+        confirmColor="text-blue-500"
+        cancelColor="text-red-500"
         confirmTooltip="Enviar"
         cancelTooltip="Cancelar"
       />
@@ -104,7 +103,9 @@ const AudioUploader = () => {
       {isLoading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 w-80 text-center">
-            <p className="text-lg font-bold mb-4">Aguarde, estamos processando seu arquivo de áudio...</p>
+            <p className="text-lg font-bold mb-4">
+              Aguarde, estamos processando seu arquivo de áudio...
+            </p>
             <div className="loader border-t-4 border-blue-500 rounded-full w-12 h-12 animate-spin mx-auto"></div>
           </div>
         </div>
@@ -115,7 +116,7 @@ const AudioUploader = () => {
         isOpen={!!errorMessage}
         title="Erro"
         message={errorMessage || ""}
-        onClose={() => setErrorMessage(null)} // Fecha o modal de erro
+        onClose={() => setErrorMessage(null)}
       />
     </div>
   );

@@ -6,6 +6,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
+  ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -31,7 +33,8 @@ const SavedTranscriptionsScreen: React.FC<SavedTranscriptionsScreenProps> = ({
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [successModalVisible, setSuccessModalVisible] = useState(false);
-  const [deleteAll, setDeleteAll] = useState(false); // Estado para deletar todas as transcrições
+  const [deleteAll, setDeleteAll] = useState(false);
+  const [loading, setLoading] = useState(true); // Estado de carregamento
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   useEffect(() => {
@@ -40,7 +43,10 @@ const SavedTranscriptionsScreen: React.FC<SavedTranscriptionsScreenProps> = ({
         const transcriptions = await loadAllTranscriptions();
         setTranscriptions(transcriptions);
       } catch (error) {
+        Alert.alert("Erro", "Não foi possível carregar as transcrições.");
         console.error("Erro ao carregar as transcrições:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -60,6 +66,7 @@ const SavedTranscriptionsScreen: React.FC<SavedTranscriptionsScreenProps> = ({
         );
         setSuccessModalVisible(true);
       } catch (error) {
+        Alert.alert("Erro", "Não foi possível deletar a transcrição.");
         console.error("Erro ao deletar a transcrição:", error);
       } finally {
         setModalVisible(false);
@@ -74,6 +81,7 @@ const SavedTranscriptionsScreen: React.FC<SavedTranscriptionsScreenProps> = ({
       setTranscriptions([]);
       setSuccessModalVisible(true);
     } catch (error) {
+      Alert.alert("Erro", "Não foi possível deletar todas as transcrições.");
       console.error("Erro ao deletar todas as transcrições:", error);
     } finally {
       setModalVisible(false);
@@ -100,7 +108,9 @@ const SavedTranscriptionsScreen: React.FC<SavedTranscriptionsScreenProps> = ({
         items={helpTexts.savedTranscriptions.items}
       />
       <Text style={styles.title}>Transcrições Salvas</Text>
-      {transcriptions.length === 0 ? (
+      {loading ? (
+        <ActivityIndicator size="large" color="#007AFF" />
+      ) : transcriptions.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>Nenhuma transcrição salva.</Text>
         </View>
@@ -144,7 +154,7 @@ const SavedTranscriptionsScreen: React.FC<SavedTranscriptionsScreenProps> = ({
           </TouchableOpacity>
         </>
       )}
-      <Modal
+            <Modal
         visible={modalVisible}
         transparent
         animationType="fade"

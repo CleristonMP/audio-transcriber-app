@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Text, Alert, ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -20,6 +20,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ openDrawer }) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [hasSavedTranscription, setHasSavedTranscription] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkSavedTranscriptions = async () => {
@@ -27,7 +28,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ openDrawer }) => {
         const keys = await AsyncStorage.getAllKeys();
         setHasSavedTranscription(keys.length > 0);
       } catch (error) {
+        Alert.alert("Erro", "Não foi possível verificar as transcrições salvas.");
         console.error("Erro ao verificar transcrições salvas:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -51,16 +55,22 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ openDrawer }) => {
         <AudioUploader />
         <AudioRecorder />
       </View>
-      {hasSavedTranscription && (
-        <TouchableOpacity
-          style={styles.savedTranscriptionsButton}
-          onPress={navigateToTranscription}
-        >
-          <FontAwesome name="file-text" size={20} color="#fff" />
-          <Text style={styles.savedTranscriptionsButtonText}>
-            Ver Transcrições Salvas
-          </Text>
-        </TouchableOpacity>
+      {loading ? (
+        <ActivityIndicator size="large" color="#007AFF" />
+      ) : (
+        hasSavedTranscription && (
+          <TouchableOpacity
+            style={styles.savedTranscriptionsButton}
+            onPress={navigateToTranscription}
+            accessibilityLabel="Ver Transcrições Salvas"
+            accessibilityHint="Navega para a tela de transcrições salvas"
+          >
+            <FontAwesome name="file-text" size={20} color="#fff" />
+            <Text style={styles.savedTranscriptionsButtonText}>
+              Ver Transcrições Salvas
+            </Text>
+          </TouchableOpacity>
+        )
       )}
     </View>
   );

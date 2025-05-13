@@ -1,10 +1,10 @@
-'use client';
-import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
-import ConfirmationModal from './ConfirmationModal';
-import { convertFromRaw } from 'draft-js';
-import { stateToHTML } from 'draft-js-export-html';
+"use client";
+import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faTimes, faTrash } from "@fortawesome/free-solid-svg-icons";
+import ConfirmationModal from "./ConfirmationModal";
+import { convertFromRaw } from "draft-js";
+import { stateToHTML } from "draft-js-export-html";
 
 interface TranscriptionCardProps {
   id: string;
@@ -14,39 +14,45 @@ interface TranscriptionCardProps {
   onDelete: (id: string) => void;
 }
 
-const TranscriptionCard: React.FC<TranscriptionCardProps> = ({ id, text, date, onEdit, onDelete }) => {
+const TranscriptionCard: React.FC<TranscriptionCardProps> = ({
+  id,
+  text,
+  date,
+  onEdit,
+  onDelete,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleDeleteClick = () => {
-    setIsModalOpen(true); // Abre o modal de confirmação
+    setIsModalOpen(true);
   };
 
   const handleConfirmDelete = () => {
-    setIsModalOpen(false); // Fecha o modal
-    onDelete(id); // Chama a função de exclusão
+    setIsModalOpen(false);
+    onDelete(id);
   };
 
   const handleCancelDelete = () => {
-    setIsModalOpen(false); // Fecha o modal sem excluir
+    setIsModalOpen(false);
   };
 
-    // Converte o conteúdo serializado em HTML
-    const renderStyledText = () => {
-      try {
-        const contentState = convertFromRaw(text); // Converte o conteúdo salvo
-        return stateToHTML(contentState); // Converte para HTML
-      } catch (error) {
-        console.error('Erro ao renderizar o conteúdo estilizado:', error);
-        return '<p>Erro ao carregar o conteúdo.</p>';
-      }
-    };
+  // Converte o conteúdo serializado em HTML
+  const renderStyledText = () => {
+    try {
+      const contentState = convertFromRaw(text);
+      return stateToHTML(contentState);
+    } catch (error) {
+      console.error("Erro ao renderizar o conteúdo estilizado:", error);
+      return "<p>Erro ao carregar o conteúdo.</p>";
+    }
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4 mb-4">
       {/* Cabeçalho com a data e hora */}
       <div className="mb-4">
         <span className="text-sm text-gray-500">
-          Transcrição salva em {date.split(' ')[0]} às {date.split(' ')[1]}
+          Transcrição salva em {date.split(" ")[0]} às {date.split(" ")[1]}
         </span>
       </div>
       {/* Texto da transcrição */}
@@ -54,7 +60,6 @@ const TranscriptionCard: React.FC<TranscriptionCardProps> = ({ id, text, date, o
         className="text-gray-700 text-sm whitespace-pre-wrap mb-4"
         dangerouslySetInnerHTML={{ __html: renderStyledText() }}
       ></div>
-      {/* <p className="text-gray-700 text-sm whitespace-pre-wrap mb-4">{text}</p> */}
       {/* Botões de ação */}
       <div className="flex justify-end space-x-2">
         {/* Botão de Editar */}
@@ -82,10 +87,10 @@ const TranscriptionCard: React.FC<TranscriptionCardProps> = ({ id, text, date, o
         message="Tem certeza de que deseja excluir esta transcrição?"
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
-        confirmIcon={faTrash} // Ícone de lixeira para confirmar exclusão
-        cancelIcon={faTimes} // Ícone de "x" para cancelar
-        confirmColor="text-red-500" // Cor vermelha para exclusão
-        cancelColor="text-gray-500" // Cor cinza para cancelar
+        confirmIcon={faTrash}
+        cancelIcon={faTimes}
+        confirmColor="text-red-500"
+        cancelColor="text-gray-500"
         confirmTooltip="Excluir"
         cancelTooltip="Cancelar"
       />

@@ -16,7 +16,8 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSMicrophoneUsageDescription": "Precisamos de acesso ao microfone para gravar áudio."
-      }
+      },
+      "bundleIdentifier": "com.anonymous.transcribermobile"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,8 +27,12 @@
       "permissions": [
         "RECORD_AUDIO",
         "WRITE_EXTERNAL_STORAGE",
+        "READ_EXTERNAL_STORAGE",
+        "RECORD_AUDIO",
+        "WRITE_EXTERNAL_STORAGE",
         "READ_EXTERNAL_STORAGE"
-      ]
+      ],
+      "package": "com.anonymous.transcribermobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -9,7 +9,7 @@ export const uploadAudioAndGetTranscription = async (
     formData.append("audio", file);
 
     const response = await fetch(
-      "http://192.168.0.124:3000/api/transcriber/upload",
+      "http://192.168.0.123:3000/api/transcriber/upload",
       {
         method: "POST",
         body: formData,

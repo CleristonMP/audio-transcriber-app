@@ -1,12 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Editor,
   EditorState,
   ContentState,
   RichUtils,
-  Modifier,
   convertFromRaw,
   convertToRaw,
 } from "draft-js";
@@ -19,7 +18,6 @@ import {
   faListOl,
   faEraser,
   faSave,
-  faQuestionCircle,
   faCopy,
 } from "@fortawesome/free-solid-svg-icons";
 import "draft-js/dist/Draft.css";
@@ -28,41 +26,40 @@ import {
   getTranscriptions,
   saveTranscriptions,
 } from "@/services/localStorageService";
-import MessageModal from "@/components/MessageModal";
-import HelpModal from "@/components/HelpModal";
+import dynamic from "next/dynamic";
 import NavigationDrawer from "@/components/NavigationDrawer";
 import instructions from "@/data/instructions.json";
 import HelpButton from "@/components/HelpButton";
+import { applyInlineStyle, applyBlockType, clearStyles } from "@/utils/editorUtils";
+
+const HelpModal = dynamic(() => import("@/components/HelpModal"));
+const MessageModal = dynamic(() => import("@/components/MessageModal"));
 
 const TranscriptionScreen: React.FC = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const id = searchParams?.get("id");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isHelpOpen, setIsHelpOpen] = useState(false); // Estado para o modal de ajuda
-  const [copySuccess, setCopySuccess] = useState(false); // Estado para feedback de cópia
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
   const text = searchParams?.get("text") || "";
 
-  const [editorState, setEditorState] = useState(
-    EditorState.createWithContent(ContentState.createFromText(text)) ||
-      EditorState.createEmpty()
-  );
-
-  useEffect(() => {
+  const initialEditorState = useMemo(() => {
     if (id) {
       const transcriptions = getTranscriptions();
       const transcriptionToEdit = transcriptions.find((t) => t.id === id);
       if (transcriptionToEdit) {
-        setEditorState(
-          EditorState.createWithContent(
-            typeof transcriptionToEdit.text === "string"
-              ? ContentState.createFromText(transcriptionToEdit.text)
-              : convertFromRaw(transcriptionToEdit.text)
-          )
+        return EditorState.createWithContent(
+          typeof transcriptionToEdit.text === "string"
+            ? ContentState.createFromText(transcriptionToEdit.text)
+            : convertFromRaw(transcriptionToEdit.text)
         );
       }
     }
-  }, [id]);
+    return EditorState.createWithContent(ContentState.createFromText(text)) || EditorState.createEmpty();
+  }, [id, text]);
+
+  const [editorState, setEditorState] = useState(initialEditorState);
 
   const handleKeyCommand = (command: string, editorState: EditorState) => {
     const newState = RichUtils.handleKeyCommand(editorState, command);
@@ -74,35 +71,15 @@ const TranscriptionScreen: React.FC = () => {
   };
 
   const toggleInlineStyle = (style: string) => {
-    setEditorState(RichUtils.toggleInlineStyle(editorState, style));
+    setEditorState(applyInlineStyle(editorState, style));
   };
 
   const toggleBlockType = (blockType: string) => {
-    setEditorState(RichUtils.toggleBlockType(editorState, blockType));
+    setEditorState(applyBlockType(editorState, blockType));
   };
 
   const clearInlineStyles = () => {
-    const selection = editorState.getSelection();
-    const contentState = editorState.getCurrentContent();
-
-    // Remove todas as estilizações inline da seleção atual
-    const styles = ["BOLD", "ITALIC", "UNDERLINE"];
-    let newContentState = contentState;
-
-    styles.forEach((style) => {
-      newContentState = Modifier.removeInlineStyle(
-        newContentState,
-        selection,
-        style
-      );
-    });
-
-    const newEditorState = EditorState.push(
-      editorState,
-      newContentState,
-      "change-inline-style"
-    );
-    setEditorState(newEditorState);
+    setEditorState(clearStyles(editorState));
   };
 
   const handleCopyToClipboard = () => {
@@ -149,7 +126,7 @@ const TranscriptionScreen: React.FC = () => {
 
   const handleModalConfirm = () => {
     setIsModalOpen(false);
-    router.replace("/saved-transcriptions"); // Redireciona para a página de transcrições salvas
+    router.replace("/saved-transcriptions");
   };
 
   return (
@@ -303,7 +280,7 @@ const TranscriptionScreen: React.FC = () => {
 
       {/* Feedback de Cópia */}
       {copySuccess && (
-        <p className="mt-2 text-green-600">Texto copiado para a área de transferência!</p>
+        <p className="mt-2 text-green-600">Texto copiado com sucesso para a área de transferência!</p>
       )}
 
       {/* Modal de Confirmação */}
@@ -311,6 +288,7 @@ const TranscriptionScreen: React.FC = () => {
         isOpen={isModalOpen}
         message="Transcrição salva com sucesso!"
         onConfirm={handleModalConfirm}
+        aria-describedby="modal-description"
       />
     </div>
   );

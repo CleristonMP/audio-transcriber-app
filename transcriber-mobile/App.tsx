@@ -44,17 +44,17 @@ const App = () => {
           }}
         >
           <Stack.Screen name="Home">
-            {(props) => <HomeScreen {...props} openDrawer={openDrawer} />}
+            {(props: any) => <HomeScreen {...props} openDrawer={openDrawer} />}
           </Stack.Screen>
 
           <Stack.Screen name="Transcription">
-            {(props) => (
+            {(props: any) => (
               <TranscriptionScreen {...props} openDrawer={openDrawer} />
             )}
           </Stack.Screen>
 
           <Stack.Screen name="SavedTranscriptions">
-            {(props) => (
+            {(props: any) => (
               <SavedTranscriptionsScreen {...props} openDrawer={openDrawer} />
             )}
           </Stack.Screen>

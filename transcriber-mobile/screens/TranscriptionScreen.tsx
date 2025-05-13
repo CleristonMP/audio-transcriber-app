@@ -7,6 +7,7 @@ import {
   Text,
   Modal,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { FontAwesome } from "@expo/vector-icons";
@@ -26,16 +27,31 @@ const TranscriptionScreen: React.FC<Props> = ({ route, navigation, openDrawer }:
   const { transcription, id } = route.params;
   const [editedText, setEditedText] = useState(transcription);
   const [modalVisible, setModalVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadEditedText("transcription").then((savedText) => {
-      if (savedText) setEditedText(savedText);
-    });
+    const fetchEditedText = async () => {
+      try {
+        const savedText = await loadEditedText("transcription");
+        if (savedText) setEditedText(savedText);
+      } catch (error) {
+        Alert.alert("Erro", "Não foi possível carregar a transcrição.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEditedText();
   }, [transcription]);
 
   const handleExport = async () => {
+    if (!editedText.trim()) {
+      Alert.alert("Erro", "O texto da transcrição não pode estar vazio.");
+      return;
+    }
+
     try {
-      await exportText(editedText)
+      await exportText(editedText);
     } catch (error) {
       Alert.alert(
         "Erro",
@@ -46,6 +62,11 @@ const TranscriptionScreen: React.FC<Props> = ({ route, navigation, openDrawer }:
   };
 
   const handleSave = async () => {
+    if (!editedText.trim()) {
+      Alert.alert("Erro", "O texto da transcrição não pode estar vazio.");
+      return;
+    }
+
     try {
       const savedId = await saveEditedText(id || null, editedText);
       setModalVisible(false);
@@ -63,24 +84,23 @@ const TranscriptionScreen: React.FC<Props> = ({ route, navigation, openDrawer }:
 
   return (
     <View style={styles.container}>
-      {/* Botão para abrir o drawer */}
       {openDrawer && <DrawerButton onPress={openDrawer} />}
-
-      {/* Botão de ajuda */}
       <HelpButton
         title={helpTexts.transcription.title}
         description={helpTexts.transcription.description}
         items={helpTexts.transcription.items}
       />
-
-      {/* Conteúdo principal */}
       <Text style={styles.title}>Editar Transcrição</Text>
-      <TextInput
-        style={styles.textInput}
-        multiline
-        value={editedText}
-        onChangeText={setEditedText}
-      />
+      {loading ? (
+        <ActivityIndicator size="large" color="#007AFF" />
+      ) : (
+        <TextInput
+          style={styles.textInput}
+          multiline
+          value={editedText}
+          onChangeText={setEditedText}
+        />
+      )}
       <View style={styles.iconRow}>
         <AnimatedButton
           style={styles.iconButton}
@@ -99,8 +119,6 @@ const TranscriptionScreen: React.FC<Props> = ({ route, navigation, openDrawer }:
           <FontAwesome name="share" size={24} color="#4CD964" />
         </AnimatedButton>
       </View>
-
-      {/* Modal de Confirmação */}
       <Modal
         visible={modalVisible}
         transparent
@@ -109,9 +127,7 @@ const TranscriptionScreen: React.FC<Props> = ({ route, navigation, openDrawer }:
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalText}>
-              Deseja salvar esta transcrição?
-            </Text>
+            <Text style={styles.modalText}>Deseja salvar esta transcrição?</Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={[styles.modalIconButton, { backgroundColor: "#FF3B30" }]}

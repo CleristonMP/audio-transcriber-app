@@ -1,30 +1,34 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import AudioUploader from "@/components/AudioUploader";
-import AudioRecorder from "@/components/AudioRecorder";
+import dynamic from "next/dynamic";
 import NavigationDrawer from "@/components/NavigationDrawer";
 import HelpModal from "@/components/HelpModal";
 import instructions from "@/data/instructions.json";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFileAlt, faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
+import { faFileAlt } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import { config } from "@fortawesome/fontawesome-svg-core";
-import "@fortawesome/fontawesome-svg-core/styles.css";
+import "@/config/fontAwesomeConfig";
 import HelpButton from "@/components/HelpButton";
+import { hasSeenHelpModal, markHelpModalAsSeen } from "@/services/localStorageService";
 
-// Evita a adição automática de CSS pelo Font Awesome
-config.autoAddCss = false;
+const AudioUploader = dynamic(() => import("@/components/AudioUploader"));
+const AudioRecorder = dynamic(() => import("@/components/AudioRecorder"));
 
 export default function Home() {
   const [hasSavedTranscriptions, setHasSavedTranscriptions] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [isRecording, setIsRecording] = useState(false); // Estado para controlar a gravação
 
   useEffect(() => {
-    // Verifica se há transcrições salvas no localStorage
     const savedTranscriptions = localStorage.getItem("transcriptions");
     setHasSavedTranscriptions(
       !!savedTranscriptions && JSON.parse(savedTranscriptions).length > 0
     );
+
+    if (!hasSeenHelpModal()) {
+      setIsHelpOpen(true);
+      markHelpModalAsSeen();
+    }
   }, []);
 
   return (
@@ -43,12 +47,12 @@ export default function Home() {
       />
 
       <h1 className="text-3xl font-bold text-center mb-8">Audio Transcriber</h1>
-      <div className="flex space-x-16 mb-8">
+      <div className="flex items-center space-x-16 mb-8">
         {/* Botão para o componente AudioUploader */}
-        <AudioUploader />
+        <AudioUploader disabled={isRecording} />
 
         {/* Botão para o componente AudioRecorder */}
-        <AudioRecorder />
+        <AudioRecorder onRecordingChange={(recording) => setIsRecording(recording)} />
       </div>
 
       {/* Botão para acessar transcrições salvas */}

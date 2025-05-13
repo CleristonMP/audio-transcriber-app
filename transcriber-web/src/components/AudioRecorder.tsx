@@ -3,14 +3,18 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMicrophone, faStop } from "@fortawesome/free-solid-svg-icons";
+import { uploadAudioFile } from "@/services/uploadService";
+import ErrorModal from "@/components/ErrorModal"; // Import do modal de erro
 
-const AudioRecorder: React.FC = () => {
+interface AudioRecorderProps {
+  onRecordingChange: (isRecording: boolean) => void;
+}
+
+const AudioRecorder: React.FC<AudioRecorderProps> = ({ onRecordingChange }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
-    null
-  );
-  const [errorMessage, setErrorMessage] = useState<string | null>(null); // Estado para mensagens de erro
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
   const startRecording = async () => {
@@ -44,37 +48,20 @@ const AudioRecorder: React.FC = () => {
           return;
         }
 
-        // Envia o arquivo webm diretamente para o servidor
-        const formData = new FormData();
-        formData.append("audio", audioBlob);
-
+        // Envia o arquivo usando o serviço de upload
         try {
-          const response = await fetch(
-            "http://localhost:3000/api/transcriber/upload",
-            {
-              method: "POST",
-              body: formData,
-            }
-          );
+          const formData = new FormData();
+          formData.append("audio", audioBlob);
 
-          if (response.ok) {
-            const data = await response.json();
-            const transcription = data.transcription;
+          const data = await uploadAudioFile(formData);
+          const transcription = data.transcription;
 
-            // Redireciona para a tela de edição da transcrição
-            router.push(
-              `/transcription?text=${encodeURIComponent(transcription)}`
-            );
-          } else {
-            console.error("Erro ao processar o áudio:", response.statusText);
-            setErrorMessage(
-              "Erro ao processar o áudio. Por favor, tente novamente mais tarde."
-            );
-          }
-        } catch (error) {
+          // Redireciona para a tela de edição da transcrição
+          router.push(`/transcription?text=${encodeURIComponent(transcription)}`);
+        } catch (error: any) {
           console.error("Erro ao enviar o áudio:", error);
           setErrorMessage(
-            "Erro ao enviar o áudio. Verifique sua conexão com a internet e tente novamente."
+            error.message || "Erro ao enviar o áudio. Verifique sua conexão com a internet e tente novamente."
           );
         } finally {
           setIsLoading(false);
@@ -83,6 +70,7 @@ const AudioRecorder: React.FC = () => {
 
       recorder.start();
       setIsRecording(true);
+      onRecordingChange(true); // Notifica o componente pai
     } catch (error) {
       console.error("Erro ao acessar o microfone:", error);
       setErrorMessage(
@@ -95,12 +83,22 @@ const AudioRecorder: React.FC = () => {
     if (mediaRecorder) {
       mediaRecorder.stop();
       setIsRecording(false);
-      setIsLoading(true);
+      onRecordingChange(false); // Notifica o componente pai
     }
   };
 
   return (
     <div>
+      {/* Modal de erro */}
+      {errorMessage && (
+        <ErrorModal
+          isOpen={!!errorMessage}
+          title="Erro na Gravação"
+          message={errorMessage}
+          onClose={() => setErrorMessage(null)}
+        />
+      )}
+
       {isLoading ? (
         <div className="flex flex-col items-center justify-center">
           <div className="loader mb-4"></div>
@@ -110,11 +108,6 @@ const AudioRecorder: React.FC = () => {
         </div>
       ) : (
         <>
-          {errorMessage && (
-            <div className="mb-4 p-4 bg-red-100 text-red-700 rounded">
-              {errorMessage}
-            </div>
-          )}
           <button
             className={`p-4 px-6 flex rounded-full shadow-lg focus:outline-none ${
               isRecording
@@ -122,6 +115,7 @@ const AudioRecorder: React.FC = () => {
                 : "bg-green-500 hover:bg-green-600"
             }`}
             onClick={isRecording ? stopRecording : startRecording}
+            aria-label={isRecording ? "Parar gravação" : "Iniciar gravação"}
           >
             <FontAwesomeIcon
               icon={isRecording ? faStop : faMicrophone}
