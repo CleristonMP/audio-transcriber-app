@@ -12,13 +12,13 @@ Aplicativo completo para transcrição de áudio em tempo real, desenvolvido com
 
 ## 🚀 Funcionalidades
 
-✅ Gravação de áudio diretamente no app
-✅ Upload de arquivos de áudio locais
-✅ Transcrição automática via Google Speech-to-Text V1
-✅ Compartilhamento da transcrição (mobile)
-✅ Botão para copiar o texto (web)
-✅ Histórico local de transcrições
-✅ Interface limpa, responsiva e intuitiva
+- ✅ Gravação de áudio diretamente no app
+- ✅ Upload de arquivos de áudio locais
+- ✅ Transcrição automática via Google Speech-to-Text V1
+- ✅ Compartilhamento da transcrição (mobile)
+- ✅ Botão para copiar o texto (web)
+- ✅ Histórico local de transcrições
+- ✅ Interface limpa, responsiva e intuitiva
 
 ---
 
