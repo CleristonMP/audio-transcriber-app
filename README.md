@@ -80,7 +80,7 @@ cd audio-transcriber
 ```bash
 cd transcriber-backend
 npm install
-npm run dev
+npx ts-node src/index.ts
 ```
 
 #### Web
