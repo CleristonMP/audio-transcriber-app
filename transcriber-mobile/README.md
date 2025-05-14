@@ -1,4 +1,4 @@
-# **Audio Transcriber App**
+# **Audio Transcriber Mobile App**
 
 Um aplicativo móvel para transcrição de áudio, permitindo que os usuários gravem, façam upload de arquivos de áudio, editem e gerenciem transcrições salvas.
 
