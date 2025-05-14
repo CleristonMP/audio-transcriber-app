@@ -51,28 +51,27 @@ audio-transcriber-backend/
 
 ### 2. Instalação
 
-    1. Clone o repositório:
-    ```bash
-    git clone https://github.com/CleristonMP/audio-transcriber-backend.git
-    cd audio-transcriber-backend
-    ```
+1. Clone o repositório:
+```bash
+git clone https://github.com/CleristonMP/audio-transcriber-backend.git
+cd audio-transcriber-backend
+```
 
-    2. Instale as dependências:
+2. Instale as dependências:
 
-    ```bash
-    npm install
-    ```
+```bash
+npm install
+```
 
-    3. Configure o arquivo `.env`: Crie um arquivo `.env` na raiz do projeto e adicione as seguintes variáveis:
+3. Configure o arquivo `.env`: Crie um arquivo `.env` na raiz do projeto e adicione as seguintes variáveis:
 
-    ```plaintext
-    GOOGLE_APPLICATION_CREDENTIALS=./path/to/your-key.json
-    PORT=3000
-    ```
+```plaintext
+GOOGLE_APPLICATION_CREDENTIALS=./path/to/your-key.json
+PORT=3000
+```
 
-    4. Certifique-se de que o arquivo `google-credentials.json` está no caminho especificado.
+4. Certifique-se de que o arquivo `google-credentials.json` está no caminho especificado.
 
----
 
 ### 3. ▶️ Execução
 
@@ -124,4 +123,5 @@ Este projeto está licenciado sob a MIT License.
 ## 📞 Contato
 
 **Autor**: Cleriston Pereira  
-**Github**: [cleriston.melo.pereira@example.com](https://github.com/CleristonMP)
+**Github**: [CleristonMP](https://github.com/CleristonMP)
+
