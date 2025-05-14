@@ -20,10 +20,10 @@ Um aplicativo móvel para transcrição de áudio, permitindo que os usuários g
 ## **Visão Geral**
 
 O **Audio Transcriber App** é um aplicativo móvel que permite aos usuários:
-- Gravar áudios diretamente no aplicativo.
 - Fazer upload de arquivos de áudio para transcrição.
+- Gravar áudios diretamente no aplicativo.
 - Visualizar, editar e excluir transcrições salvas.
-- Exportar transcrições para outros aplicativos.
+- Exportar o texto das transcrições para outros aplicativos.
 
 O aplicativo é construído com **React Native** e utiliza o **AsyncStorage** para persistência local de dados.
 
@@ -31,13 +31,13 @@ O aplicativo é construído com **React Native** e utiliza o **AsyncStorage** pa
 
 ## **Funcionalidades**
 
-- **Gravação de Áudio**: Grave áudios diretamente no aplicativo para transcrição.
 - **Upload de Áudio**: Faça upload de arquivos de áudio salvos no dispositivo.
+- **Gravação de Áudio**: Grave áudios diretamente no aplicativo para transcrição.
 - **Gerenciamento de Transcrições**:
   - Visualize transcrições salvas.
   - Edite e exclua transcrições individualmente.
   - Exclua todas as transcrições de uma vez.
-- **Exportação**: Compartilhe transcrições com outros aplicativos.
+- **Exportação**: Compartilhe o texto das transcrições com outros aplicativos.
 - **Ajuda ao Usuário**: Botões de ajuda em cada tela para orientar o uso do aplicativo.
 
 ---
@@ -59,7 +59,7 @@ Certifique-se de que você tem as seguintes ferramentas instaladas no seu ambien
 
 1. Clone este repositório:
    ```bash
-   git clone https://github.com/seu-usuario/audio-transcriber-app.git
+   git clone https://github.com/CleristonMP/audio-transcriber-app.git
    cd audio-transcriber-app/transcriber-mobile
    ```
 
@@ -71,7 +71,7 @@ Certifique-se de que você tem as seguintes ferramentas instaladas no seu ambien
 3. Inicie o aplicativo:
    - Para projetos Expo:
      ```bash
-     expo start
+     npx expo start
      ```
    - Para projetos React Native CLI:
      ```bash
@@ -83,7 +83,7 @@ Certifique-se de que você tem as seguintes ferramentas instaladas no seu ambien
 
 ## **Uso**
 1. Tela Inicial:
-   - Grave ou faça upload de áudios para transcrição.
+   - Faça upload de áudios ou grave para transcrição.
    - Acesse transcrições salvas.
 
 2. Tela de Transcrições Salvas:
