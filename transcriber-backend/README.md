@@ -25,6 +25,7 @@ Este é o backend do aplicativo **Audio Transcriber**, que processa arquivos de 
 
 ## 📂 Estrutura do Projeto
 
+```plaintext
 audio-transcriber-backend/ 
 ├── src/ 
 │   ├── index.ts # Ponto de entrada do servidor 
@@ -36,6 +37,7 @@ audio-transcriber-backend/
 ├── .env # Variáveis de ambiente 
 ├── package.json # Configuração do projeto e dependências 
 └── README.md # Documentação do projeto
+```
 
 ---
 
@@ -51,7 +53,7 @@ audio-transcriber-backend/
 
     1. Clone o repositório:
     ```bash
-    git clone https://github.com/seu-usuario/audio-transcriber-backend.git
+    git clone https://github.com/CleristonMP/audio-transcriber-backend.git
     cd audio-transcriber-backend
     ```
 
