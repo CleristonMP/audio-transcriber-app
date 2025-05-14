@@ -130,8 +130,31 @@ Este projeto foi criado com o objetivo de consolidar conhecimentos em:
 ---
 
 ## 📷 Imagens do App
+![Mobile Home Screen](https://github.com/CleristonMP/portfolio/blob/main/public/assets/medias/projects/audio-transcriber/1-audio-transcriber-mobile-app-home.jpeg?raw=true)
 
-> (Sugestão: adicionar screenshots do app mobile e web aqui para melhorar a apresentação.)
+![Mobile Home Help](https://github.com/CleristonMP/portfolio/blob/main/public/assets/medias/projects/audio-transcriber/audio-transcriber-mobile-app-home-help.jpeg?raw=true)
+
+![Mobile Saved Transcriptions](https://github.com/CleristonMP/portfolio/blob/main/public/assets/medias/projects/audio-transcriber/audio-transcriber-mobile-app-saved-transcriptions-screen.jpeg?raw=true)
+
+![Mobile Saved Transcriptions Help](https://github.com/CleristonMP/portfolio/blob/main/public/assets/medias/projects/audio-transcriber/audio-transcriber-mobile-app-saved-transcription-screen-help.jpeg?raw=true)
+
+![Mobile Transcription Screen](https://github.com/CleristonMP/portfolio/blob/main/public/assets/medias/projects/audio-transcriber/audio-transcriber-mobile-app-transcription-screen.jpeg?raw=true)
+
+![Mobile Transcription Screen Help](https://github.com/CleristonMP/portfolio/blob/main/public/assets/medias/projects/audio-transcriber/audio-transcriber-mobile-app-transcription-screen-help.jpeg?raw=true)
+
+![Backend Running](https://github.com/CleristonMP/portfolio/blob/main/public/assets/medias/projects/audio-transcriber/backend-node-express-audio-transcriber-app.png?raw=true)
+
+![Web Home Page](https://github.com/CleristonMP/portfolio/blob/main/public/assets/medias/projects/audio-transcriber/frontend-web-audio-transcriber-app-home.png?raw=true)
+
+![Web Home Page Help](https://github.com/CleristonMP/portfolio/blob/main/public/assets/medias/projects/audio-transcriber/frontend-web-audio-transcriber-app-home-help.png?raw=true)
+
+![Web Saved Transcriptions Page](https://github.com/CleristonMP/portfolio/blob/main/public/assets/medias/projects/audio-transcriber/frontend-web-audio-transcriber-app-saved-transcriptions-screen.png?raw=true)
+
+![Web Saved Transcriptions Page Help](https://github.com/CleristonMP/portfolio/blob/main/public/assets/medias/projects/audio-transcriber/frontend-web-audio-transcriber-app-saved-transcriptions-screen-help.png?raw=true)
+
+![Web Transcription Screen](https://github.com/CleristonMP/portfolio/blob/main/public/assets/medias/projects/audio-transcriber/frontend-web-audio-transcriber-app-transcription-screen.png?raw=true)
+
+![Web Transcription Screen Help](https://github.com/CleristonMP/portfolio/blob/main/public/assets/medias/projects/audio-transcriber/frontend-web-audio-transcriber-app-transcription-screen-help.png?raw=true)
 
 ---
 
