@@ -1,4 +1,4 @@
-# Audio Transcriber App
+# Audio Transcriber Web App
 
 Bem-vindo ao **Audio Transcriber App**, um aplicativo web desenvolvido com **Next.js** que permite aos usuários fazer upload ou gravar áudios e transcrevê-los automaticamente. Este projeto foi criado para facilitar a transcrição de áudios de forma rápida e eficiente.
 
@@ -49,7 +49,7 @@ audio-transcriber-app/
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/audio-transcriber-app.git
+   git clone https://github.com/CleristonMP/audio-transcriber-app.git
    cd audio-transcriber-app/transcriber-web/
    ```
 
@@ -115,8 +115,7 @@ Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar
 Se tiver dúvidas ou sugestões, entre em contato:
 
 - **Autor:** Cleriston
-- **Email:** seu-email@example.com
-- **GitHub:** [seu-usuario](https://github.com/seu-usuario)
+- **GitHub:** [CleristonMP](https://github.com/CleristonMP)
 
 ---
 **Divirta-se transcrevendo! 🎉**
