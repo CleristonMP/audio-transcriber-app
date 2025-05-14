@@ -69,7 +69,7 @@ Aplicativo completo para transcrição de áudio em tempo real, desenvolvido com
 ### 1. Clonar o Repositório
 
 ```bash
-git clone https://github.com/SeuUsuario/audio-transcriber.git
+git clone https://github.com/CleristonMP/audio-transcriber.git
 cd audio-transcriber
 ```
 
@@ -80,7 +80,7 @@ cd audio-transcriber
 ```bash
 cd transcriber-backend
 npm install
-npx ts-node src/index.ts
+npm run dev
 ```
 
 #### Web
