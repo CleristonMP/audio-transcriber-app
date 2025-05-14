@@ -1,5 +1,13 @@
-import { useEffect, useState } from "react";
-import { StyleSheet, View, TouchableOpacity, Text, Alert, ActivityIndicator } from "react-native";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Text,
+  Alert,
+  ActivityIndicator,
+  Animated,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -21,6 +29,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ openDrawer }) => {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [hasSavedTranscription, setHasSavedTranscription] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isRecording, setIsRecording] = useState(false);
+  const recorderPosition = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const checkSavedTranscriptions = async () => {
@@ -42,6 +52,34 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ openDrawer }) => {
     navigation.navigate("SavedTranscriptions");
   };
 
+  const handleStartRecording = () => {
+    setIsRecording(true);
+    Animated.timing(recorderPosition, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const handleStopRecording = () => {
+    Animated.timing(recorderPosition, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: false,
+    }).start(() => setIsRecording(false));
+  };
+
+  const recorderStyle = {
+    transform: [
+      {
+        translateX: recorderPosition.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, 10],
+        }),
+      },
+    ],
+  };
+
   return (
     <View style={styles.container}>
       <DrawerButton onPress={openDrawer} />
@@ -52,8 +90,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ openDrawer }) => {
       />
       <Text style={styles.title}>Transcreva seu Áudio</Text>
       <View style={styles.buttonsRow}>
-        <AudioUploader />
-        <AudioRecorder />
+        {!isRecording && <AudioUploader />}
+        <Animated.View style={[styles.recorderContainer, recorderStyle]}>
+          <AudioRecorder
+            onStartRecording={handleStartRecording}
+            onStopRecording={handleStopRecording}
+          />
+        </Animated.View>
       </View>
       {loading ? (
         <ActivityIndicator size="large" color="#007AFF" />
@@ -95,6 +138,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "baseline",
     width: "50%",
+  },
+  recorderContainer: {
+    flex: 1,
   },
   savedTranscriptionsButton: {
     flexDirection: "row",

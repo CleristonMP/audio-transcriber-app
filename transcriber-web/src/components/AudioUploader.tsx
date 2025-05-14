@@ -33,7 +33,7 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ disabled = false }) => {
   const handleConfirm = async () => {
     setIsModalOpen(false);
     if (file) {
-      setIsLoading(true); // Exibe o loader
+      setIsLoading(true);
       try {
         const formData = new FormData();
         formData.append("audio", file);
@@ -50,14 +50,14 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ disabled = false }) => {
           setErrorMessage(error.message || "Ocorreu um erro inesperado.");
         }
       } finally {
-        setIsLoading(false); // Oculta o loader
+        setIsLoading(false);
       }
     }
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
-    setFile(null); // Reseta o arquivo selecionado
+    setFile(null);
   };
 
   return (
@@ -75,10 +75,10 @@ const AudioUploader: React.FC<AudioUploaderProps> = ({ disabled = false }) => {
       {/* Botão estilizado para upload */}
       <label
         htmlFor="audio-upload"
-        className={`p-4 px-5 bg-orange-400 text-white rounded-full shadow-lg hover:bg-blue-600 focus:outline-none cursor-pointer flex items-center justify-center ${
+        className={`p-4 px-5 rounded-full shadow-lg focus:outline-none flex items-center justify-center ${
           disabled
             ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-            : "bg-orange-400 text-white hover:bg-blue-600"
+            : "bg-orange-400 text-white hover:bg-blue-600 cursor-pointer"
         }`}
       >
         <FontAwesomeIcon icon={faFolderOpen} className="text-2xl" />

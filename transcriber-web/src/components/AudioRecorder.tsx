@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMicrophone, faStop } from "@fortawesome/free-solid-svg-icons";
 import { uploadAudioFile } from "@/services/uploadService";
-import ErrorModal from "@/components/ErrorModal"; // Import do modal de erro
+import ErrorModal from "@/components/ErrorModal";
 
 interface AudioRecorderProps {
   onRecordingChange: (isRecording: boolean) => void;
@@ -19,7 +19,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onRecordingChange }) => {
 
   const startRecording = async () => {
     try {
-      setErrorMessage(null); // Limpa mensagens de erro anteriores
+      setErrorMessage(null);
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
       setMediaRecorder(recorder);

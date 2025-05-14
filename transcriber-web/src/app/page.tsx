@@ -17,7 +17,7 @@ const AudioRecorder = dynamic(() => import("@/components/AudioRecorder"));
 export default function Home() {
   const [hasSavedTranscriptions, setHasSavedTranscriptions] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const [isRecording, setIsRecording] = useState(false); // Estado para controlar a gravação
+  const [isRecording, setIsRecording] = useState(false);
 
   useEffect(() => {
     const savedTranscriptions = localStorage.getItem("transcriptions");
